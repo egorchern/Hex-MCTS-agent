@@ -2,7 +2,7 @@ import numpy as np
 import math
 from timeit import default_timer as timer
 from random import shuffle
-
+# good article to read: https://medium.com/@quasimik/monte-carlo-tree-search-applied-to-letterpress-34f41c86e238
 class MCTSNode():
     def __init__(self, colour, move = None):
         self.children = []
@@ -45,10 +45,8 @@ def get_opp_colour(colour):
         """
         if colour == "R":
             return "B"
-        elif colour == "B":
+        else: 
             return "R"
-        else:
-            return "None"
         
 def get_legal_moves(board):
     moves = []
@@ -61,15 +59,23 @@ def get_legal_moves(board):
     return moves
 
 def convert_board_to_string(board):
-    pass
+    stringBoard = ""
+    for rowIndex in range(board):
+        separator = ","
+        if rowIndex == len(board) - 1:
+            separator = ""
+        stringBoard += "".join(board[rowIndex]) + separator
+    return stringBoard
+        
 
 def get_winner(board):
     # Use the engine's code to get the winner of a board.
     from src.Board import Board as engineBoard
+    from src.Colour import Colour 
     ref_board = engineBoard()
     ref_board.from_string(convert_board_to_string(board))
     ref_board.has_ended()
-    return ref_board.get_winner()
+    return Colour.get_char(ref_board.get_winner())
 
 class RandomPlayout():
     def __init__(self):
@@ -90,6 +96,22 @@ class RandomPlayout():
         return get_winner(current_board)
 
 
+class MCTSBackPropogate():
+    def __init__(self):
+        pass
+    
+    @staticmethod
+    def update(self, node: MCTSNode, rWins, bWins):
+        totalSimulaitons = rWins + bWins
+        node.N += totalSimulaitons
+        # Update using opposite colour. On blue nodes, add red wins. On red nodes, add blue wins
+        # Because on blue colored nodes, the children are red, so we are choosing the move that results in red node that produces the best outcome for blue
+        # So we add blue win on red nodes
+        if node.colour == "R":
+            node.Q += bWins
+        else:
+            node.Q += rWins
+    
 class MCTSAgent():
     def __init__(self):
         # Parameters
@@ -98,8 +120,8 @@ class MCTSAgent():
         # Policies
         self.selection_policy = UCT()
         self.expansion_policy = ExpandAll()
-        self.simulation_policy = RandomPlayout(self.simulations_count)
-
+        self.simulation_policy = RandomPlayout()
+        self.back_propogation_policy = MCTSBackPropogate()
         
     def expand(self, root: MCTSNode, board: np.ndarray):
        newNodes = self.expansion_policy.generate_new_nodes(board)
@@ -107,9 +129,16 @@ class MCTSAgent():
        root.children += newNodes
        return newNodes
 
-    def simulate(self, node):
+    def simulate(self, node, board):
+        rWins = 0
+        bWins = 0
         for i in range(self.simulations_count):
-            winner = self.simulation_policy.playout(node.colour)
+            winner = self.simulation_policy.playout(board, get_opp_colour(node.colour))
+            if winner == "R":
+                rWins += 1
+            else:
+                bWins += 1
+        return (rWins, bWins)
 
     def select(self, root: MCTSNode) -> MCTSNode:
         bestValue = -float("inf")
@@ -136,10 +165,18 @@ class MCTSAgent():
                 bestChild = self.select(node)
                 path.append(bestChild)
                 move = bestChild.move
-                current_board[move[0]][move[1]] = bestChild.colour
+                current_board[move[0]][move[1]] = get_opp_colour(bestChild.colour)
             # Expansion phase
             newNodes = self.expand(node, current_board, get_opp_colour(node.colour))
             # Simulation phase
-            for node in newNodes:
-                (rWins, bWins) = self.simulate(node)
+            for expandedNode in newNodes:
+                simulation_board = np.copy(current_board)
+                simulation_board[expandedNode.move[0]][expandedNode.move[1]] = get_opp_colour(expandedNode.colour)
+                (rWins, bWins) = self.simulate(expandedNode, simulation_board)
                 # Back-propogation phase
+                # Update the newly expanded node first
+                self.back_propogation_policy.update(expandedNode, rWins, bWins)
+                # Update all nodes on path, going from latest node (LIFO)
+                for i in range(len(path) - 1, -1, -1):
+                    nodeOnPath = path[i]
+                    self.back_propogation_policy.update(nodeOnPath, rWins, bWins)
