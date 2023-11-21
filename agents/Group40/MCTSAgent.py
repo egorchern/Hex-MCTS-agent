@@ -2,6 +2,7 @@ import numpy as np
 import math
 from timeit import default_timer as timer
 from random import shuffle
+from random import randint
 # good article to read: https://medium.com/@quasimik/monte-carlo-tree-search-applied-to-letterpress-34f41c86e238
 class MCTSNode():
     def __init__(self, colour, move = None):
@@ -18,10 +19,13 @@ class MCTSNode():
 
     def is_leaf(self):
         return len(self.children) == 0
-    
+opp_colour = {
+    "R": "B",
+    "B": "R"
+}
 class UCT():
     def __init__(self):
-        self.C = math.sqrt(2)
+        self.C = 0.5
 
     def calculate_value(self, node: MCTSNode, parent: MCTSNode):
         return (node.Q / node.N) + (self.C * math.sqrt(math.log(parent.N) / node.N))
@@ -38,6 +42,16 @@ class ExpandAll():
             node = MCTSNode(colour, move)
             nodes[i] = node
         return nodes
+class ExpandOneRandom():
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def generate_new_nodes(board, colour):
+        moves = get_legal_moves(board)
+        randomIndex = randint(0, len(moves) - 1)
+        randomMove = moves[randomIndex]
+        return [MCTSNode(colour, randomMove)]
     
 def get_opp_colour(colour):
         """Returns the char representation of the colour opposite to the
@@ -57,6 +71,17 @@ def get_legal_moves(board: np.ndarray):
             if cell_color == '0':
                 moves.append((rowIndex, colIndex))
     return moves
+
+def get_num_legal_moves(board: np.ndarray):
+    moves = 0
+    for rowIndex in range(len(board)):
+        curRow = board[rowIndex]
+        for colIndex in range(len(curRow)):
+            cell_color = curRow[colIndex]
+            if cell_color == '0':
+                moves += 1
+    return moves
+
 
 def convert_board_to_string(board):
     stringBoard = ""
@@ -91,7 +116,7 @@ class RandomPlayout():
         current_board = np.copy(board)
         for i, move in enumerate(moves):
             current_board[move[0]][move[1]] = cur_colour
-            cur_colour = get_opp_colour(cur_colour)
+            cur_colour = opp_colour[cur_colour]
         return get_winner(current_board)
 
 
@@ -130,8 +155,8 @@ class RobustChild():
 class MCTSAgent():
     def __init__(self):
         # Parameters
-        self.simulations_count = 10
-        self.time_limit_seconds = 5
+        self.simulations_count = 270
+        self.time_limit_seconds = 12
         # Policies
         self.selection_policy = UCT()
         self.expansion_policy = ExpandAll()
@@ -140,9 +165,10 @@ class MCTSAgent():
         self.root_move_selection_policy = RobustChild()
         
     def expand(self, root: MCTSNode, board: np.ndarray):
-       newNodes = self.expansion_policy.generate_new_nodes(board, get_opp_colour(root.colour))
+       newNodes = self.expansion_policy.generate_new_nodes(board, opp_colour[root.colour])
        # Link the newly generated children with the parent
-       root.children += newNodes
+       for node in newNodes:
+           root.children.append(node)
        return newNodes
     
     def select_best_move(self, root):
@@ -152,7 +178,7 @@ class MCTSAgent():
         rWins = 0
         bWins = 0
         for i in range(self.simulations_count):
-            winner = self.simulation_policy.playout(board, get_opp_colour(node.colour))
+            winner = self.simulation_policy.playout(board, node.colour)
             if winner == "R":
                 rWins += 1
             else:
@@ -172,25 +198,26 @@ class MCTSAgent():
     def MCTS(self, initial_board: np.ndarray, colour: str, turn_count: int):
         self.root = MCTSNode(colour)
         self.colour = colour
-        self.opp_colour = get_opp_colour(colour)
         start_time = timer()
+        iterations = 0
         # While not reached time limit, run MCTS 
         while (timer()  - start_time) < self.time_limit_seconds:
+            iterations += 1
             node = self.root
             current_board = np.copy(initial_board)
             # Selection phase
             path = [node]
-            while not node.is_leaf():
+            while len(node.children) == get_num_legal_moves(current_board):
                 node = self.select(node)
                 path.append(node)
                 move = node.move
-                current_board[move[0]][move[1]] = get_opp_colour(node.colour)
+                current_board[move[0]][move[1]] = opp_colour[node.colour]
             # Expansion phase
             newNodes = self.expand(node, current_board)
             # Simulation phase
             for expandedNode in newNodes:
                 simulation_board = np.copy(current_board)
-                simulation_board[expandedNode.move[0]][expandedNode.move[1]] = get_opp_colour(expandedNode.colour)
+                simulation_board[expandedNode.move[0]][expandedNode.move[1]] = opp_colour[expandedNode.colour]
                 (rWins, bWins) = self.simulate(expandedNode, simulation_board)
                 # Back-propogation phase
                 # Update the newly expanded node first
@@ -200,6 +227,7 @@ class MCTSAgent():
                     nodeOnPath = path[i]
                     self.back_propogation_policy.update(nodeOnPath, rWins, bWins)
         # Select final move
+        print(iterations)
         return self.select_best_move(self.root)
 
 
