@@ -2,7 +2,7 @@ import socket
 from random import choice
 from time import sleep
 import numpy as np
-import MCTSAgent
+from MCTSAgent import MCTSAgent
 
 class Index():
 
@@ -48,7 +48,7 @@ class Index():
             if s[0] == "START":
                 self.board_size = int(s[1])
                 self.colour = s[2]
-                self.board = np.full(self.board_size, "0", dtype=np.character)
+                self.board = np.full((self.board_size, self.board_size), '0')
 
                 if self.colour == "R":
                     self.make_move()
@@ -82,6 +82,7 @@ class Index():
         """
         # TODO swap rule
         move = self.decide_move()
+        print(move)
         self.s.sendall(bytes(f"{move[0]},{move[1]}\n", "utf-8"))
         self.board[move[0]][move[1]] = self.colour
         # # print(f"{self.colour} making move")

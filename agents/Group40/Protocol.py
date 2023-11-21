@@ -4,16 +4,15 @@ from sys import platform, stdout
 from time import time_ns
 from Colour import Colour
 import shlex
-import random
 
 
 class Protocol():
     """Static class that handles protocol communication between engine and
     agents. Uses a TCP socket.
     """
-    
+
     HOST = "127.0.0.1"
-    PORT = random.randint(1024, 10000)
+    PORT = 1234
     s = None
     sockets = {Colour.RED: {}, Colour.BLUE: {}}
 

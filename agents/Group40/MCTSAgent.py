@@ -48,19 +48,19 @@ def get_opp_colour(colour):
         else: 
             return "R"
         
-def get_legal_moves(board):
+def get_legal_moves(board: np.ndarray):
     moves = []
     for rowIndex in range(len(board)):
         curRow = board[rowIndex]
         for colIndex in range(len(curRow)):
             cell_color = curRow[colIndex]
-            if cell_color == "0":
+            if cell_color == '0':
                 moves.append((rowIndex, colIndex))
     return moves
 
 def convert_board_to_string(board):
     stringBoard = ""
-    for rowIndex in range(board):
+    for rowIndex in range(len(board)):
         separator = ","
         if rowIndex == len(board) - 1:
             separator = ""
@@ -70,10 +70,9 @@ def convert_board_to_string(board):
 
 def get_winner(board):
     # Use the engine's code to get the winner of a board.
-    from src.Board import Board as engineBoard
-    from src.Colour import Colour 
-    ref_board = engineBoard()
-    ref_board.from_string(convert_board_to_string(board))
+    from Board import Board as engineBoard
+    from Colour import Colour 
+    ref_board = engineBoard.from_string(convert_board_to_string(board))
     ref_board.has_ended()
     return Colour.get_char(ref_board.get_winner())
 
@@ -101,7 +100,7 @@ class MCTSBackPropogate():
         pass
     
     @staticmethod
-    def update(self, node: MCTSNode, rWins, bWins):
+    def update(node: MCTSNode, rWins, bWins):
         totalSimulaitons = rWins + bWins
         node.N += totalSimulaitons
         # Update using opposite colour. On blue nodes, add red wins. On red nodes, add blue wins
@@ -111,23 +110,43 @@ class MCTSBackPropogate():
             node.Q += bWins
         else:
             node.Q += rWins
-    
+
+class RobustChild():
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get_best_child(root: MCTSNode):
+        children = root.children
+        bestChild = None
+        bestValue = float("-inf")
+        for node in children:
+            value = node.N
+            if value > bestValue:
+                bestChild = node
+                bestValue = value
+        return bestChild
+
 class MCTSAgent():
     def __init__(self):
         # Parameters
         self.simulations_count = 10
-        self.time_limit_seconds = 60
+        self.time_limit_seconds = 5
         # Policies
         self.selection_policy = UCT()
         self.expansion_policy = ExpandAll()
         self.simulation_policy = RandomPlayout()
         self.back_propogation_policy = MCTSBackPropogate()
+        self.root_move_selection_policy = RobustChild()
         
     def expand(self, root: MCTSNode, board: np.ndarray):
-       newNodes = self.expansion_policy.generate_new_nodes(board)
+       newNodes = self.expansion_policy.generate_new_nodes(board, get_opp_colour(root.colour))
        # Link the newly generated children with the parent
        root.children += newNodes
        return newNodes
+    
+    def select_best_move(self, root):
+        return self.root_move_selection_policy.get_best_child(root).move
 
     def simulate(self, node, board):
         rWins = 0
@@ -162,12 +181,12 @@ class MCTSAgent():
             # Selection phase
             path = [node]
             while not node.is_leaf():
-                bestChild = self.select(node)
-                path.append(bestChild)
-                move = bestChild.move
-                current_board[move[0]][move[1]] = get_opp_colour(bestChild.colour)
+                node = self.select(node)
+                path.append(node)
+                move = node.move
+                current_board[move[0]][move[1]] = get_opp_colour(node.colour)
             # Expansion phase
-            newNodes = self.expand(node, current_board, get_opp_colour(node.colour))
+            newNodes = self.expand(node, current_board)
             # Simulation phase
             for expandedNode in newNodes:
                 simulation_board = np.copy(current_board)
@@ -180,3 +199,12 @@ class MCTSAgent():
                 for i in range(len(path) - 1, -1, -1):
                     nodeOnPath = path[i]
                     self.back_propogation_policy.update(nodeOnPath, rWins, bWins)
+        # Select final move
+        return self.select_best_move(self.root)
+
+
+if __name__ == "__main__":
+    agent = MCTSAgent()
+    board_size = 11
+    initial_board = np.full((board_size, board_size), '0')
+    print(agent.MCTS(initial_board, "R", 0))
