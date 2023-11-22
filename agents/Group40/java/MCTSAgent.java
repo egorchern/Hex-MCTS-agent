@@ -77,7 +77,7 @@ public class MCTSAgent {
         return rootMoveSelectionPolicy.getBestChild(root).move;
     }
 
-    public int[] MCTS(char[][] board, char colour, long turn_count){
+    public int[] MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
         long msTimeLimit = time_limit_seconds * 1000;
         long start_time = System.currentTimeMillis();
@@ -116,6 +116,8 @@ public class MCTSAgent {
             }
         }
         System.out.println(iterations);
-        return selectBestMove(root);
+        int[] bestMove = selectBestMove(root);
+        root = null;
+        return bestMove;
     }
 }

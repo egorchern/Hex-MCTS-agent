@@ -3,6 +3,9 @@ package agents.Group40.java;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Random;
+
+import agents.Group40.java.common.Common;
+
 import java.io.*;
 
 class Index{
@@ -13,9 +16,10 @@ class Index{
     private PrintWriter out;
     private BufferedReader in;
 
-    private String colour = "R";
+    private char colour = 'R';
     private int turn = 0;
     private int boardSize = 11;
+    private static MCTSAgent agent = new MCTSAgent();
 
     private void Connect() throws UnknownHostException, IOException{
         s = new Socket(HOST, PORT);
@@ -75,9 +79,8 @@ class Index{
         switch (msg[0]){
             case "START":
                 boardSize = Integer.parseInt(msg[1]);
-                colour = msg[2];
-                if (colour.equals("R")){
-                    // so sad ):
+                colour = msg[2].charAt(0);
+                if (colour == 'R'){
                     String board = "";
                     for (int i = 0; i < boardSize; i++){
                         String line = "";
@@ -92,7 +95,7 @@ class Index{
 
             case "CHANGE":
                 if (msg[3].equals("END")) return false;
-                if (msg[1].equals("SWAP")) colour = opp(colour);
+                if (msg[1].equals("SWAP")) colour = Common.opp_colour.get(colour);
                 if (msg[3].equals(colour)) makeMove(msg[2]);
                 break;
 
@@ -103,34 +106,46 @@ class Index{
         return true;
     }
 
-    private void makeMove(String board){
+    public int[] decideMove(char[][] board){
+        return agent.MCTS(board, colour, turn);
+    }
+
+    public void makeMove(String board){
         if (turn == 2 && new Random().nextInt(2) == 1){
             sendMessage("SWAP\n");
             return;
         }
 
         String[] lines = board.split(",");
-        ArrayList<int[]> choices = new ArrayList<int[]>();
-
-        for (int i = 0; i < boardSize; i++)
-            for (int j = 0; j < boardSize; j++)
-                if (lines[i].charAt(j) == '0'){
-                    int[] newElement = {i, j};
-                    choices.add(newElement);
-                }
-
-        if (choices.size() > 0){
-            int[] choice = choices.get(new Random().nextInt(choices.size()));
-            String msg = "" + choice[0] + "," + choice[1] + "\n";
-            sendMessage(msg);
+        // Interpret board
+        char[][] curBoard = new char[boardSize][boardSize];
+        for (int idy = 0; idy < boardSize; idy++){
+            for (int idx = 0; idx < boardSize; idx++){
+                char cell = lines[idy].charAt(idx);
+                curBoard[idy][idx] = cell;
+            }
         }
+        int[] move = decideMove(curBoard);
+        // Send the move
+        String msg = "" + move[0] + "," + move[1] + "\n";
+        sendMessage(msg);
+        System.gc();
+        // ArrayList<int[]> choices = new ArrayList<int[]>();
+
+        // for (int i = 0; i < boardSize; i++)
+        //     for (int j = 0; j < boardSize; j++)
+        //         if (lines[i].charAt(j) == '0'){
+        //             int[] newElement = {i, j};
+        //             choices.add(newElement);
+        //         }
+
+        // if (choices.size() > 0){
+        //     int[] choice = choices.get(new Random().nextInt(choices.size()));
+        //     String msg = "" + choice[0] + "," + choice[1] + "\n";
+        //     sendMessage(msg);
+        //}
     }
 
-    public static String opp(String c){
-        if (c.equals("R")) return "B";
-        if (c.equals("B")) return "R";
-        return "None";
-    }
 
 
     public static void main(String args[]){
