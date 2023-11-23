@@ -38,7 +38,7 @@ public class MCTSAgent {
     }
 
     private static MCTSNode[] expand(MCTSNode node, char[][] board){
-        MCTSNode[] newNodes = expansionPolicy.generateNewNodes(board, Common.opp_colour.get(node.colour));
+        MCTSNode[] newNodes = expansionPolicy.generateNewNodes(node, board, Common.opp_colour.get(node.colour));
         for (MCTSNode newNode: newNodes){
             node.children.add(newNode);
         }

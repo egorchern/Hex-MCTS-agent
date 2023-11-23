@@ -1,9 +1,6 @@
 package javaV.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Common {
     public static Map<Character, Character> opp_colour = new HashMap<Character, Character>(){
@@ -43,6 +40,24 @@ public class Common {
         }
         return moves;
     }
+
+    public static ArrayList<int[]> getLegalMovesExcept(char[][] board, Set<List<Integer>> exceptSet){
+        ArrayList<int[]> moves = new ArrayList<int[]>();
+        for(int i = 0; i < board.length; i++){
+            for (int j = 0; j < board.length; j++){
+                if (board[i][j] == '0'){
+                    int[] move = {i, j};
+                    List<Integer> key = Arrays.stream(move).boxed().toList();
+                    if (!exceptSet.contains(key)){
+                        moves.add(move);
+                    }
+
+                }
+            }
+        }
+        return moves;
+    }
+
     private static boolean DFSColourFullyConnected(int x, int y, char colour, boolean[][] visited, char[][] board){
         visited[y][x] = true;
         int yLen = visited.length;

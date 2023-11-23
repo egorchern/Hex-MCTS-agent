@@ -1,12 +1,19 @@
 package javaV.policies.expansion;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javaV.MCTSNode;
 import javaV.common.Common;
 public class ExpandOneRandom {
-    public static MCTSNode[] generateNewNodes(char[][] board, char colour){
-        ArrayList<int[]> moves = Common.getLegalMoves(board);
+    public static MCTSNode[] generateNewNodes(MCTSNode node, char[][] board, char colour){
+        // Because we are expanding randomly one at a time, we might have that same move node is generated as expanded node
+        Set<List<Integer>> expandedMoves = new HashSet<List<Integer>>();
+        for(MCTSNode child : node.children){
+            int[] move = child.move;
+            List<Integer> key = Arrays.stream(move).boxed().toList();
+            expandedMoves.add(key);
+        }
+        ArrayList<int[]> moves = Common.getLegalMovesExcept(board, expandedMoves);
         // Solves bug if moves is only length 1
         int randomIndex = 0;
         if (moves.size() > 1){
