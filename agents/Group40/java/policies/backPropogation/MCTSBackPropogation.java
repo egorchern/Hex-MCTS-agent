@@ -1,6 +1,6 @@
-package agents.Group40.java.policies.backPropogation;
+package javaV.policies.backPropogation;
 
-import agents.Group40.java.MCTSNode;
+import javaV.MCTSNode;
 
 public class MCTSBackPropogation {
     public static void update(MCTSNode node, int rWins, int bWins){

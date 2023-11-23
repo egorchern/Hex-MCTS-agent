@@ -1,4 +1,4 @@
-package agents.Group40.java.common;
+package javaV.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +13,10 @@ public class Common {
         }
         
     };
+
+    public static char[][] copy2dArray(char[][] arr){
+        return Arrays.stream(arr).map(char[]::clone).toArray(char[][]::new);
+    }
 
     public static long getNumLegalMoves(char[][] board){
         long movesCnt = 0;
@@ -103,7 +107,11 @@ public class Common {
         int yLen = board.length;
         int xLen = board[0].length;
         boolean[][] visited = new boolean[yLen][xLen];
-        Arrays.fill(visited, false);
+        for (int idy = 0; idy < yLen; idy++){
+            for (int idx = 0; idx < xLen; idx++){
+                visited[idy][idx] = false;
+            }
+        }
         // Check Red
         for (int idx = 0; idx < xLen; idx++){
             char cell = board[0][idx];

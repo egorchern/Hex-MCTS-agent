@@ -1,23 +1,22 @@
-package agents.Group40.java;
+package javaV;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import agents.Group40.java.policies.backPropogation.MCTSBackPropogation;
-import agents.Group40.java.policies.expansion.ExpandOneRandom;
-import agents.Group40.java.policies.rootMoveSelection.RobustChild;
-import agents.Group40.java.policies.selection.UCT;
-import agents.Group40.java.policies.simulation.RandomPlayout;
-import agents.Group40.java.common.Common;
+import javaV.policies.backPropogation.MCTSBackPropogation;
+import javaV.policies.expansion.ExpandAll;
+import javaV.policies.expansion.ExpandOneRandom;
+import javaV.policies.rootMoveSelection.RobustChild;
+import javaV.policies.selection.UCT;
+import javaV.policies.simulation.RandomPlayout;
+import javaV.common.Common;
 
 public class MCTSAgent {
     // Parameters
-    private static int simulations_count = 15;
+    private static int simulations_count = 150;
     private static int time_limit_seconds = 8;
     // Policies
     private static UCT selectionPolicy = new UCT();
-    private static ExpandOneRandom expansionPolicy = new ExpandOneRandom();
+    private static ExpandAll expansionPolicy = new ExpandAll();
     private static RandomPlayout simulationPolicy = new RandomPlayout();
     private static MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
     private static RobustChild rootMoveSelectionPolicy = new RobustChild();
@@ -83,9 +82,10 @@ public class MCTSAgent {
         long start_time = System.currentTimeMillis();
         int iterations = 0;
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
+
             iterations++;
             MCTSNode node = root;
-            char[][] current_board = board.clone();
+            char[][] current_board = Common.copy2dArray(board);
             // Selection phase
             ArrayList<MCTSNode> path = new ArrayList<MCTSNode>();
             path.add(node);
@@ -99,7 +99,7 @@ public class MCTSAgent {
             MCTSNode[] expandedNodes = expand(node, current_board);
             // Simulation Phase
             for(MCTSNode expandedNode : expandedNodes){
-                char[][] simulationBoard = current_board.clone();
+                char[][] simulationBoard = Common.copy2dArray(current_board);
                 int[] move = expandedNode.move;
                 simulationBoard[move[0]][move[1]] = Common.opp_colour.get(expandedNode.colour);
                 int[] temp = simulate(expandedNode, simulationBoard);
@@ -109,7 +109,7 @@ public class MCTSAgent {
                 //Update the newly expanded node first
                 backPropogationPolicy.update(expandedNode, rWins, bWins);
                 //Update all nodes on path, going from latest node (LIFO)
-                for(int i = path.size() - 1; i > 0; i--){
+                for(int i = path.size() - 1; i >= 0; i--){
                     MCTSNode nodeOnPath = path.get(i);
                     backPropogationPolicy.update(nodeOnPath, rWins, bWins);
                 }

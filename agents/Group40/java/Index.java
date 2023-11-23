@@ -1,10 +1,9 @@
-package agents.Group40.java;
+package javaV;
 
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Random;
 
-import agents.Group40.java.common.Common;
+import javaV.common.Common;
 
 import java.io.*;
 
@@ -96,7 +95,7 @@ class Index{
             case "CHANGE":
                 if (msg[3].equals("END")) return false;
                 if (msg[1].equals("SWAP")) colour = Common.opp_colour.get(colour);
-                if (msg[3].equals(colour)) makeMove(msg[2]);
+                if (msg[3].equals("" + colour)) makeMove(msg[2]);
                 break;
 
             default:
@@ -106,7 +105,7 @@ class Index{
         return true;
     }
 
-    public int[] decideMove(char[][] board){
+    public static int[] decideMove(char[][] board, char colour, int turn){
         return agent.MCTS(board, colour, turn);
     }
 
@@ -125,7 +124,8 @@ class Index{
                 curBoard[idy][idx] = cell;
             }
         }
-        int[] move = decideMove(curBoard);
+        //TODO Swap is fucked
+        int[] move = decideMove(curBoard, colour, turn);
         // Send the move
         String msg = "" + move[0] + "," + move[1] + "\n";
         sendMessage(msg);
@@ -151,5 +151,12 @@ class Index{
     public static void main(String args[]){
         Index agent = new Index();
         agent.run();
+        char[][] testBoard = new char[11][11];
+        for (int i = 0; i < 11; i++){
+            for (int j = 0; j < 11; j++){
+                testBoard[i][j] = '0';
+            }
+        }
+        System.out.println(agent.decideMove(testBoard, 'B', 0));
     }
 }

@@ -1,6 +1,6 @@
-package agents.Group40.java.policies.rootMoveSelection;
+package javaV.policies.rootMoveSelection;
 
-import agents.Group40.java.MCTSNode;
+import javaV.MCTSNode;
 
 public class RobustChild {
 

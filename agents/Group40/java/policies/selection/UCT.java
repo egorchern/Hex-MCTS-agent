@@ -1,6 +1,6 @@
-package agents.Group40.java.policies.selection;
+package javaV.policies.selection;
 
-import agents.Group40.java.MCTSNode;
+import javaV.MCTSNode;
 
 public class UCT{
     public static double C = 0.5;

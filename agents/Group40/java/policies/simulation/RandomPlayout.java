@@ -1,7 +1,7 @@
-package agents.Group40.java.policies.simulation;
+package javaV.policies.simulation;
 import java.util.List;
 import java.util.Collections;
-import agents.Group40.java.common.Common;
+import javaV.common.Common;
 public class RandomPlayout {
 
     public static char playout(char[][] board, char startingColour){
@@ -10,7 +10,7 @@ public class RandomPlayout {
         List<int[]> moves = Common.getLegalMoves(board);
         // Shuffle in place
         Collections.shuffle(moves);
-        char[][] currentBoard = board.clone();
+        char[][] currentBoard = Common.copy2dArray(board);
         char curColour = startingColour;
         for (int[] move: moves){
             currentBoard[move[0]][move[1]] = curColour;
