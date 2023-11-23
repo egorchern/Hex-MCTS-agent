@@ -13,8 +13,8 @@ import javaV.common.Common;
 
 public class MCTSAgent {
     // Parameters
-    public static int simulations_count = 350;
-    public static int time_limit_seconds = 10;
+    public static int simulationsCntPerCore = 350;
+    public static int timeLimitSeconds = 10;
     public static double C = 0.4;
     // Policies
     private static UCT selectionPolicy = new UCT();
@@ -23,7 +23,7 @@ public class MCTSAgent {
     private static MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
     private static SecureChild rootMoveSelectionPolicy = new SecureChild();
     public static int cores = Runtime.getRuntime().availableProcessors();
-    private static int simulationPerThread = (int) Math.floor((double) simulations_count / cores);
+
     private MCTSNode root;
 
     private MCTSNode select(MCTSNode root){
@@ -54,7 +54,7 @@ public class MCTSAgent {
         Thread[] threads = new Thread[cores];
         SimulationThread[] threadInfos = new SimulationThread[cores];
         for (int i = 0; i < threads.length; i++){
-            threadInfos[i] = new SimulationThread(board, node.colour, simulationPerThread);
+            threadInfos[i] = new SimulationThread(board, node.colour, simulationsCntPerCore);
             threads[i] = new Thread(threadInfos[i]);
             threads[i].start();
 
@@ -97,7 +97,7 @@ public class MCTSAgent {
 
     public int[] MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
-        long msTimeLimit = time_limit_seconds * 1000L;
+        long msTimeLimit = timeLimitSeconds * 1000L;
         long start_time = System.currentTimeMillis();
         int iterations = 0;
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){

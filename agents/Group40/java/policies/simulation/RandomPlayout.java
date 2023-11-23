@@ -1,6 +1,8 @@
 package javaV.policies.simulation;
 import java.util.List;
 import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javaV.common.Common;
 public class RandomPlayout {
 
@@ -9,7 +11,7 @@ public class RandomPlayout {
         //Then check who won, no need to check after each move
         List<int[]> moves = Common.getLegalMoves(board);
         // Shuffle in place
-        Collections.shuffle(moves);
+        Collections.shuffle(moves, ThreadLocalRandom.current());
         char[][] currentBoard = Common.copy2dArray(board);
         char curColour = startingColour;
         for (int[] move: moves){

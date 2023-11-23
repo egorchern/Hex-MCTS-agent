@@ -41,6 +41,7 @@ public class Common {
         return moves;
     }
 
+
     public static ArrayList<int[]> getLegalMovesExcept(char[][] board, Set<List<Integer>> exceptSet){
         ArrayList<int[]> moves = new ArrayList<int[]>();
         for(int i = 0; i < board.length; i++){

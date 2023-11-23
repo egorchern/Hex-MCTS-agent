@@ -4,7 +4,7 @@ import java.net.*;
 import java.util.Random;
 
 import javaV.common.Common;
-
+import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
 
 class Index{
@@ -108,12 +108,33 @@ class Index{
     public static int[] decideMove(char[][] board, char colour, int turn){
         return agent.MCTS(board, colour, turn);
     }
+    private int[] decideFirstRedMove(){
+        int[] move = new int[2];
+        Random cur = ThreadLocalRandom.current();
+        int firstChoice = cur.nextInt(2);
+        int secondChoice = cur.nextInt(2);
+        int xOffset = cur.nextInt(2);
+        int yOffset = cur.nextInt(2);
 
+        if(firstChoice == 0){
+            // Positive x offset
+            move[1] = xOffset;
+        }
+        else{
+            move[1] = boardSize - 1 - xOffset;
+        }
+
+        if(secondChoice == 0){
+            move[0] = yOffset;
+        }
+        else{
+            move[1] = boardSize - 1 - yOffset;
+        }
+        return move;
+    }
     public void makeMove(String board){
-//        if (turn == 2 && new Random().nextInt(2) == 1){
-//            sendMessage("SWAP\n");
-//            return;
-//        }
+
+        int[] move;
 
         String[] lines = board.split(",");
         // Interpret board
@@ -124,10 +145,15 @@ class Index{
                 curBoard[idy][idx] = cell;
             }
         }
-        //TODO Swap is fucked
-        int[] move = decideMove(curBoard, colour, turn);
+        if (colour == 'R' && turn == 1){
+            move = decideFirstRedMove();
+        }
+        else{
+            move = decideMove(curBoard, colour, turn);
+        }
+
         // Send the move
-        String msg = "" + move[0] + "," + move[1] + "\n";
+        String msg = move[0] + "," + move[1] + "\n";
         sendMessage(msg);
         System.gc();
         // ArrayList<int[]> choices = new ArrayList<int[]>();
@@ -151,10 +177,10 @@ class Index{
     public static void main(String args[]){
         // Set parameters
         if(args.length >= 1){
-            MCTSAgent.time_limit_seconds = Integer.parseInt(args[0]);
+            MCTSAgent.timeLimitSeconds = Integer.parseInt(args[0]);
         }
         if (args.length >= 2){
-            MCTSAgent.simulations_count = Integer.parseInt(args[1]);
+            MCTSAgent.simulationsCntPerCore = Integer.parseInt(args[1]);
         }
         if(args.length >= 3){
             MCTSAgent.C = Double.parseDouble(args[2]);
