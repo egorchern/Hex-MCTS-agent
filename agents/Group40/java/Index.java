@@ -18,7 +18,7 @@ class Index{
     private char colour = 'R';
     private int turn = 0;
     private int boardSize = 11;
-    private static MCTSAgent agent = new MCTSAgent();
+    public static MCTSAgent agent = new MCTSAgent();
 
     private void Connect() throws UnknownHostException, IOException{
         s = new Socket(HOST, PORT);
@@ -149,8 +149,18 @@ class Index{
 
 
     public static void main(String args[]){
-        Index agent = new Index();
-        agent.run();
+        // Set parameters
+        if(args.length >= 1){
+            MCTSAgent.time_limit_seconds = Integer.parseInt(args[0]);
+        }
+        if (args.length >= 2){
+            MCTSAgent.simulations_count = Integer.parseInt(args[1]);
+        }
+        if(args.length >= 3){
+            MCTSAgent.C = Double.parseDouble(args[2]);
+        }
+        Index intr = new Index();
+        intr.run();
 //        char[][] testBoard = new char[11][11];
 //        for (int i = 0; i < 11; i++){
 //            for (int j = 0; j < 11; j++){

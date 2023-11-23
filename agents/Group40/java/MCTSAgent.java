@@ -13,11 +13,12 @@ import javaV.common.Common;
 
 public class MCTSAgent {
     // Parameters
-    private static int simulations_count = 350;
-    private static int time_limit_seconds = 10;
+    public static int simulations_count = 350;
+    public static int time_limit_seconds = 10;
+    public static double C = 0.4;
     // Policies
     private static UCT selectionPolicy = new UCT();
-    private static ExpandAll expansionPolicy = new ExpandAll();
+    private static ExpandOneRandom expansionPolicy = new ExpandOneRandom();
     private static RandomPlayout simulationPolicy = new RandomPlayout();
     private static MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
     private static SecureChild rootMoveSelectionPolicy = new SecureChild();
