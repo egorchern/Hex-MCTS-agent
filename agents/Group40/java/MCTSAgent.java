@@ -12,7 +12,7 @@ import javaV.common.Common;
 
 public class MCTSAgent {
     // Parameters
-    private static int simulations_count = 400;
+    private static int simulations_count = 350;
     private static int time_limit_seconds = 10;
     // Policies
     private static UCT selectionPolicy = new UCT();
