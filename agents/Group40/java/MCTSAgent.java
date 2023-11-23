@@ -22,7 +22,8 @@ public class MCTSAgent {
     private static RandomPlayout simulationPolicy = new RandomPlayout();
     private static MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
     private static SecureChild rootMoveSelectionPolicy = new SecureChild();
-
+    public static int cores = Runtime.getRuntime().availableProcessors();
+    private static int simulationPerThread = (int) Math.floor((double) simulations_count / cores);
     private MCTSNode root;
 
     private MCTSNode select(MCTSNode root){
@@ -49,17 +50,44 @@ public class MCTSAgent {
     private static int[] simulate(MCTSNode node, char[][] board){
         int rWins = 0;
         int bWins = 0;
-        for(int i = 0; i < simulations_count; i++){
-            char winner = simulationPolicy.playout(board, node.colour);
-            if (winner == 'R'){
-                rWins++;
-            }
-            else{
-                bWins++;
-            }
+
+        Thread[] threads = new Thread[cores];
+        SimulationThread[] threadInfos = new SimulationThread[cores];
+        for (int i = 0; i < threads.length; i++){
+            threadInfos[i] = new SimulationThread(board, node.colour, simulationPerThread);
+            threads[i] = new Thread(threadInfos[i]);
+            threads[i].start();
+
         }
-        int[] temp = {rWins, bWins};
-        return temp;
+
+        for (Thread thread : threads) {
+
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        for (SimulationThread threadInfo : threadInfos){
+            rWins += threadInfo.rWins;
+            bWins += threadInfo.bWins;
+        }
+
+
+
+
+//        for(int i = 0; i < simulations_count; i++){
+//            char winner = simulationPolicy.playout(board, node.colour);
+//            if (winner == 'R'){
+//                rWins++;
+//            }
+//            else{
+//                bWins++;
+//            }
+//        }
+        return new int[]{rWins, bWins};
 
     }
 
