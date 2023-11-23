@@ -110,10 +110,10 @@ class Index{
     }
 
     public void makeMove(String board){
-        if (turn == 2 && new Random().nextInt(2) == 1){
-            sendMessage("SWAP\n");
-            return;
-        }
+//        if (turn == 2 && new Random().nextInt(2) == 1){
+//            sendMessage("SWAP\n");
+//            return;
+//        }
 
         String[] lines = board.split(",");
         // Interpret board
@@ -151,12 +151,12 @@ class Index{
     public static void main(String args[]){
         Index agent = new Index();
         agent.run();
-        char[][] testBoard = new char[11][11];
-        for (int i = 0; i < 11; i++){
-            for (int j = 0; j < 11; j++){
-                testBoard[i][j] = '0';
-            }
-        }
-        System.out.println(agent.decideMove(testBoard, 'B', 0));
+//        char[][] testBoard = new char[11][11];
+//        for (int i = 0; i < 11; i++){
+//            for (int j = 0; j < 11; j++){
+//                testBoard[i][j] = '0';
+//            }
+//        }
+//        System.out.println(agent.decideMove(testBoard, 'B', 0));
     }
 }

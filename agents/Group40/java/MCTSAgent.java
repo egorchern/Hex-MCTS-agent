@@ -12,8 +12,8 @@ import javaV.common.Common;
 
 public class MCTSAgent {
     // Parameters
-    private static int simulations_count = 150;
-    private static int time_limit_seconds = 8;
+    private static int simulations_count = 270;
+    private static int time_limit_seconds = 10;
     // Policies
     private static UCT selectionPolicy = new UCT();
     private static ExpandAll expansionPolicy = new ExpandAll();
@@ -22,18 +22,7 @@ public class MCTSAgent {
     private static RobustChild rootMoveSelectionPolicy = new RobustChild();
 
     private MCTSNode root;
-    
-    private long getNumLegalMoves(char[][] board){
-        long movesCnt = 0;
-        for(int i = 0; i < board.length; i++){
-            for (int j = 0; j < board.length; j++){
-                if (board[i][j] == '0'){
-                    movesCnt++;
-                }
-            }
-        }
-        return movesCnt;
-    }
+
     private MCTSNode select(MCTSNode root){
         double bestValue = Double.NEGATIVE_INFINITY;
         MCTSNode bestChild = null;
@@ -78,7 +67,7 @@ public class MCTSAgent {
 
     public int[] MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
-        long msTimeLimit = time_limit_seconds * 1000;
+        long msTimeLimit = time_limit_seconds * 1000L;
         long start_time = System.currentTimeMillis();
         int iterations = 0;
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
@@ -89,7 +78,7 @@ public class MCTSAgent {
             // Selection phase
             ArrayList<MCTSNode> path = new ArrayList<MCTSNode>();
             path.add(node);
-            while (node.children.size() == getNumLegalMoves(current_board)){
+            while (node.children.size() == Common.getNumLegalMoves(current_board)){
                 node = select(node);
                 path.add(node);
                 int[] move = node.move;
