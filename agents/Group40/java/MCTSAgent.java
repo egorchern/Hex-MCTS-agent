@@ -6,6 +6,7 @@ import javaV.policies.backPropogation.MCTSBackPropogation;
 import javaV.policies.expansion.ExpandAll;
 import javaV.policies.expansion.ExpandOneRandom;
 import javaV.policies.rootMoveSelection.RobustChild;
+import javaV.policies.rootMoveSelection.SecureChild;
 import javaV.policies.selection.UCT;
 import javaV.policies.simulation.RandomPlayout;
 import javaV.common.Common;
@@ -19,7 +20,7 @@ public class MCTSAgent {
     private static ExpandAll expansionPolicy = new ExpandAll();
     private static RandomPlayout simulationPolicy = new RandomPlayout();
     private static MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
-    private static RobustChild rootMoveSelectionPolicy = new RobustChild();
+    private static SecureChild rootMoveSelectionPolicy = new SecureChild();
 
     private MCTSNode root;
 
