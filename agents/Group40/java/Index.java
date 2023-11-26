@@ -161,7 +161,11 @@ class Index{
         else{
             move = decideMove(curBoard, colour, turn);
         }
-
+        // If it was decided to swap;
+        if(move[0] == -1){
+            sendMessage("SWAP\n");
+            return;
+        }
         // Send the move
         String msg = move[0] + "," + move[1] + "\n";
         sendMessage(msg);

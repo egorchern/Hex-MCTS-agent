@@ -94,10 +94,12 @@ public class MCTSAgent {
         root = new MCTSNode(colour);
         long msTimeLimit = timeLimitSeconds * 1000L;
         long start_time = System.currentTimeMillis();
-        int iterations = 0;
+        // special swap node
+        if (colour == 'B' && turn_count == 2){
+            MCTSNode swapNode = new MCTSNode('B', new int[]{-1, -1});
+            root.children.add(swapNode);
+        }
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
-
-            iterations++;
             MCTSNode node = root;
             char[][] current_board = Common.copy2dArray(board);
             // Selection phase
@@ -107,7 +109,10 @@ public class MCTSAgent {
                 node = select(node);
                 path.add(node);
                 int[] move = node.move;
-                current_board[move[0]][move[1]] = Common.opp_colour.get(node.colour);
+                if (move[0] != -1){
+                    current_board[move[0]][move[1]] = Common.opp_colour.get(node.colour);
+                }
+
             }
             // Expansion phase
             MCTSNode[] expandedNodes = expand(node, current_board);
@@ -129,7 +134,6 @@ public class MCTSAgent {
                 }
             }
         }
-        System.out.println(iterations);
         int[] bestMove = selectBestMove(root);
         root = null;
         return bestMove;
