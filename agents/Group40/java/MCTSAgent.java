@@ -105,8 +105,13 @@ public class MCTSAgent {
             // Selection phase
             ArrayList<MCTSNode> path = new ArrayList<MCTSNode>();
             path.add(node);
-            while (node.children.size() == Common.getNumLegalMoves(current_board)){
+            int nodeSize = node.children.size();
+            if (colour == 'B' && turn_count == 2) {
+                nodeSize--;
+            }
+            while (nodeSize == Common.getNumLegalMoves(current_board)){
                 node = select(node);
+                nodeSize = node.children.size();
                 path.add(node);
                 int[] move = node.move;
                 if (move[0] != -1){
