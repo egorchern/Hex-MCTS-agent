@@ -14,9 +14,10 @@ public class RandomPlayout {
         Collections.shuffle(moves, ThreadLocalRandom.current());
         char[][] currentBoard = Common.copy2dArray(board);
         char curColour = startingColour;
-        for (int[] move: moves){
+        int counter = startingColour == 'R' ? 0 : 1;
+        for(int[] move: moves){
             currentBoard[move[0]][move[1]] = curColour;
-            curColour = Common.opp_colour.get(curColour);
+            curColour = Common.charOptions[counter++ & 1];
         }
         return Common.getWinner(currentBoard);
     }

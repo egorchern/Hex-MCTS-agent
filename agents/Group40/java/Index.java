@@ -19,7 +19,10 @@ class Index{
     private int turn = 0;
     private int boardSize = 11;
     public static MCTSAgent agent = new MCTSAgent();
-
+    private void initializeAgent(){
+        Common.boardSize = boardSize;
+        Common.initializeRefVisited();
+    }
     private void Connect() throws UnknownHostException, IOException{
         s = new Socket(HOST, PORT);
         out = new PrintWriter(s.getOutputStream(), true);
@@ -78,6 +81,8 @@ class Index{
         switch (msg[0]){
             case "START":
                 boardSize = Integer.parseInt(msg[1]);
+
+
                 colour = msg[2].charAt(0);
                 if (colour == 'R'){
                     String board = "";
@@ -90,6 +95,7 @@ class Index{
                     }
                     makeMove(board);
                 }
+                initializeAgent();
                 break;
 
             case "CHANGE":
@@ -193,6 +199,8 @@ class Index{
 //                testBoard[i][j] = '0';
 //            }
 //        }
-//        System.out.println(agent.decideMove(testBoard, 'B', 0));
+//        Common.boardSize = 11;
+//        Common.initializeRefVisited();
+//        System.out.println(agent.MCTS(testBoard, 'R', 3));
     }
 }

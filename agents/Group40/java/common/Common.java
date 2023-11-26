@@ -10,6 +10,17 @@ public class Common {
         }
         
     };
+    public static int boardSize;
+    public static char[] charOptions = new char[]{'R', 'B'};
+    private static boolean[][] RefVisited;
+    public static void initializeRefVisited(){
+        RefVisited = new boolean[boardSize][boardSize];
+        for (int idy = 0; idy < boardSize; idy++){
+            for (int idx = 0; idx < boardSize; idx++){
+                RefVisited[idy][idx] = false;
+            }
+        }
+    }
 
     public static char[][] copy2dArray(char[][] arr){
         return Arrays.stream(arr).map(char[]::clone).toArray(char[][]::new);
@@ -18,8 +29,8 @@ public class Common {
     public static long getNumLegalMoves(char[][] board){
         long movesCnt = 0;
         
-        for(int i = 0; i < board.length; i++){
-            for (int j = 0; j < board.length; j++){
+        for(int i = 0; i < boardSize; i++){
+            for (int j = 0; j < boardSize; j++){
                 if (board[i][j] == '0'){
                     movesCnt++;
                 }
@@ -30,8 +41,8 @@ public class Common {
 
     public static ArrayList<int[]> getLegalMoves(char[][] board){
         ArrayList<int[]> moves = new ArrayList<int[]>();
-        for(int i = 0; i < board.length; i++){
-            for (int j = 0; j < board.length; j++){
+        for(int i = 0; i < boardSize; i++){
+            for (int j = 0; j < boardSize; j++){
                 if (board[i][j] == '0'){
                     int[] move = {i, j};
                     moves.add(move);
@@ -44,8 +55,8 @@ public class Common {
 
     public static ArrayList<int[]> getLegalMovesExcept(char[][] board, Set<List<Integer>> exceptSet){
         ArrayList<int[]> moves = new ArrayList<int[]>();
-        for(int i = 0; i < board.length; i++){
-            for (int j = 0; j < board.length; j++){
+        for(int i = 0; i < boardSize; i++){
+            for (int j = 0; j < boardSize; j++){
                 if (board[i][j] == '0'){
                     int[] move = {i, j};
                     List<Integer> key = Arrays.stream(move).boxed().toList();
@@ -61,8 +72,8 @@ public class Common {
 
     private static boolean DFSColourFullyConnected(int x, int y, char colour, boolean[][] visited, char[][] board){
         visited[y][x] = true;
-        int yLen = visited.length;
-        int xLen = visited[0].length;
+        int yLen = boardSize;
+        int xLen = boardSize;
         // Win Conds
         if (colour == 'R' && y == yLen - 1){
             return true;
@@ -120,14 +131,10 @@ public class Common {
 
     public static char getWinner(char[][] board){
         
-        int yLen = board.length;
-        int xLen = board[0].length;
-        boolean[][] visited = new boolean[yLen][xLen];
-        for (int idy = 0; idy < yLen; idy++){
-            for (int idx = 0; idx < xLen; idx++){
-                visited[idy][idx] = false;
-            }
-        }
+        int yLen = boardSize;
+        int xLen = boardSize;
+        boolean[][] visited = Arrays.stream(RefVisited).map(boolean[]::clone).toArray(boolean[][]::new);
+
         // Check Red
         for (int idx = 0; idx < xLen; idx++){
             char cell = board[0][idx];
