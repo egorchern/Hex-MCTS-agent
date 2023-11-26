@@ -2,11 +2,13 @@ package javaV;
 
 import javaV.policies.simulation.RandomPlayout;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class SimulationThread implements Runnable{
     public char[][] board;
     public char startingColor;
     public int simulationsCount;
-    private static RandomPlayout simulationPolicy = new RandomPlayout();
+    private final RandomPlayout simulationPolicy = new RandomPlayout(ThreadLocalRandom.current());
     public int rWins = 0;
     public int bWins = 0;
     public SimulationThread(char[][] board, char startingColour, int simulationsCount){

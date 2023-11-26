@@ -1,9 +1,10 @@
 package javaV.policies.expansion;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javaV.MCTSNode;
 import javaV.common.Common;
+
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 public class ExpandOneRandom {
     public static MCTSNode[] generateNewNodes(MCTSNode node, char[][] board, char colour){
         // Because we are expanding randomly one at a time, we might have that same move node is generated as expanded node

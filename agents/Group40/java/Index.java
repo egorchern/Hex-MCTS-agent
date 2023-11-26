@@ -1,11 +1,15 @@
 package javaV;
 
-import java.net.*;
-import java.util.Random;
-
 import javaV.common.Common;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.io.*;
 
 class Index{
     public static String HOST = "127.0.0.1";
@@ -23,7 +27,7 @@ class Index{
         Common.boardSize = boardSize;
         Common.initializeRefVisited();
     }
-    private void Connect() throws UnknownHostException, IOException{
+    private void Connect() throws IOException{
         s = new Socket(HOST, PORT);
         out = new PrintWriter(s.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -60,7 +64,7 @@ class Index{
             try{
                 String msg = getMessage();
                 boolean res = interpretMessage(msg);
-                if (res == false) break;
+                if (!res) break;
             } catch (IOException e){
                 System.out.println("ERROR: Could not establish I/O.");
                 return;
@@ -180,7 +184,7 @@ class Index{
 
 
 
-    public static void main(String args[]){
+    public static void main(String[] args){
         // Set parameters
         if(args.length >= 1){
             MCTSAgent.timeLimitSeconds = Integer.parseInt(args[0]);

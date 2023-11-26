@@ -4,7 +4,6 @@ import javaV.MCTSNode;
 import javaV.common.Common;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ExpandAll {
     public static MCTSNode[] generateNewNodes(MCTSNode node, char[][] board, char colour){

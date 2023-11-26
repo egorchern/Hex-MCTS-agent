@@ -145,7 +145,6 @@ public class Common {
                 }
             }
         }
-
         // Check Blue
         for (int idy = 0; idy < yLen; idy++){
             char cell = board[idy][0];
@@ -158,5 +157,26 @@ public class Common {
 
         }
         return '0';
+    }
+
+    public static char getWinnerFullBoard(char[][] board){
+
+        int yLen = boardSize;
+        int xLen = boardSize;
+        boolean[][] visited = Arrays.stream(RefVisited).map(boolean[]::clone).toArray(boolean[][]::new);
+        // Check Blue
+        for (int idy = 0; idy < yLen; idy++){
+            char cell = board[idy][0];
+            if (!visited[idy][0] && cell == 'B'){
+                boolean isConnected = DFSColourFullyConnected(0, idy, 'B', visited, board);
+                if (isConnected){
+                    return 'B';
+                }
+            }
+
+        }
+        // If blue didnt win, then Red must have won it on the fully moved board, so no need to check the blue
+
+        return 'R';
     }
 }

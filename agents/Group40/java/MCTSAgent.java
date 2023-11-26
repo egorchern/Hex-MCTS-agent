@@ -1,15 +1,13 @@
 package javaV;
 
-import java.util.ArrayList;
-
+import javaV.common.Common;
 import javaV.policies.backPropogation.MCTSBackPropogation;
-import javaV.policies.expansion.ExpandAll;
 import javaV.policies.expansion.ExpandOneRandom;
-import javaV.policies.rootMoveSelection.RobustChild;
 import javaV.policies.rootMoveSelection.SecureChild;
 import javaV.policies.selection.UCT;
-import javaV.policies.simulation.RandomPlayout;
-import javaV.common.Common;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MCTSAgent {
     // Parameters
@@ -17,11 +15,10 @@ public class MCTSAgent {
     public static int timeLimitSeconds = 10;
     public static double C = 0.4;
     // Policies
-    private static UCT selectionPolicy = new UCT();
-    private static ExpandOneRandom expansionPolicy = new ExpandOneRandom();
-    private static RandomPlayout simulationPolicy = new RandomPlayout();
-    private static MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
-    private static SecureChild rootMoveSelectionPolicy = new SecureChild();
+    private static final UCT selectionPolicy = new UCT();
+    private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
+    private static final MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
+    private static final SecureChild rootMoveSelectionPolicy = new SecureChild();
     public static int cores = Runtime.getRuntime().availableProcessors();
 
     private MCTSNode root;
@@ -30,7 +27,7 @@ public class MCTSAgent {
         double bestValue = Double.NEGATIVE_INFINITY;
         MCTSNode bestChild = null;
         for (MCTSNode child: root.children){
-            double curValue = selectionPolicy.calculateValue(child, root);
+            double curValue = UCT.calculateValue(child, root);
             if (curValue > bestValue){
                 bestValue = curValue;
                 bestChild = child;
@@ -40,10 +37,8 @@ public class MCTSAgent {
     }
 
     private static MCTSNode[] expand(MCTSNode node, char[][] board){
-        MCTSNode[] newNodes = expansionPolicy.generateNewNodes(node, board, Common.opp_colour.get(node.colour));
-        for (MCTSNode newNode: newNodes){
-            node.children.add(newNode);
-        }
+        MCTSNode[] newNodes = ExpandOneRandom.generateNewNodes(node, board, Common.opp_colour.get(node.colour));
+        Collections.addAll(node.children, newNodes);
         return newNodes;
     }
 
@@ -92,7 +87,7 @@ public class MCTSAgent {
     }
 
     private static int[] selectBestMove(MCTSNode root){
-        return rootMoveSelectionPolicy.getBestChild(root).move;
+        return SecureChild.getBestChild(root).move;
     }
 
     public int[] MCTS(char[][] board, char colour, int turn_count){
@@ -126,11 +121,11 @@ public class MCTSAgent {
                 int bWins = temp[1];
                 //Back-propogation phase
                 //Update the newly expanded node first
-                backPropogationPolicy.update(expandedNode, rWins, bWins);
+                MCTSBackPropogation.update(expandedNode, rWins, bWins);
                 //Update all nodes on path, going from latest node (LIFO)
                 for(int i = path.size() - 1; i >= 0; i--){
                     MCTSNode nodeOnPath = path.get(i);
-                    backPropogationPolicy.update(nodeOnPath, rWins, bWins);
+                    MCTSBackPropogation.update(nodeOnPath, rWins, bWins);
                 }
             }
         }
