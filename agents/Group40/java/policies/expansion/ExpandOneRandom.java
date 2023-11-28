@@ -22,7 +22,6 @@ public class ExpandOneRandom {
         }
         int[] move = moves.get(randomIndex);
         MCTSNode newNode = new MCTSNode(colour, move);
-        MCTSNode[] newNodes = {newNode};
-        return newNodes;
+        return new MCTSNode[]{newNode};
     }
 }

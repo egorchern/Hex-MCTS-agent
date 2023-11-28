@@ -5,9 +5,9 @@ import javaV.policies.simulation.RandomPlayout;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SimulationThread implements Runnable{
-    public char[][] board;
-    public char startingColor;
-    public int simulationsCount;
+    public final char[][] board;
+    public final char startingColor;
+    public final int simulationsCount;
     private final RandomPlayout simulationPolicy = new RandomPlayout(ThreadLocalRandom.current());
     public int rWins = 0;
     public int bWins = 0;

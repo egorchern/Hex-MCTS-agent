@@ -191,7 +191,7 @@ class Index{
     public static void main(String[] args){
         // Set parameters
         if(args.length >= 1){
-            MCTSAgent.timeLimitSeconds = Integer.parseInt(args[0]);
+            MCTSAgent.timeLimitSeconds = Double.parseDouble(args[0]);
         }
         if (args.length >= 2){
             MCTSAgent.simulationsCntPerCore = Integer.parseInt(args[1]);

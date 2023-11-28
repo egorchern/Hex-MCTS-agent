@@ -11,8 +11,8 @@ import java.util.Collections;
 
 public class MCTSAgent {
     // Parameters
-    public static int simulationsCntPerCore = 350;
-    public static int timeLimitSeconds = 10;
+    public static int simulationsCntPerCore = 200;
+    public static double timeLimitSeconds = 7;
     public static double C = 0.4;
     // Policies
     private static final UCT selectionPolicy = new UCT();
@@ -92,8 +92,8 @@ public class MCTSAgent {
 
     public int[] MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
-        long msTimeLimit = timeLimitSeconds * 1000L;
-        long start_time = System.currentTimeMillis();
+        final double msTimeLimit = timeLimitSeconds * 1000;
+        final long start_time = System.currentTimeMillis();
         // special swap node
         if (colour == 'B' && turn_count == 2){
             MCTSNode swapNode = new MCTSNode('B', new int[]{-1, -1});
