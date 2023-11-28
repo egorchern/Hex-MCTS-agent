@@ -23,6 +23,13 @@ class Index{
     private int turn = 0;
     private int boardSize = 11;
     public static MCTSAgent agent = new MCTSAgent();
+    private final int[][] dontSwapArray = new int[][]{
+            {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, {0, 9}, {0, 10},
+            {1, 5},
+            {2, 10},
+            {8, 0},
+            {10, 1}, {10, 2}, {10, 3}, {10, 4}, {10, 5}, {10, 6}, {10, 7}, {10, 8}, {10, 9}, {10, 10}
+    };
     private void initializeAgent(){
         Common.boardSize = boardSize;
         Common.initializeRefVisited();
@@ -97,7 +104,7 @@ class Index{
                         board += line;
                         if (i < boardSize - 1) board += ",";
                     }
-                    makeMove(board);
+                    makeMove(board, "-1,-1");
                 }
                 initializeAgent();
                 break;
@@ -105,11 +112,25 @@ class Index{
             case "CHANGE":
                 if (msg[3].equals("END")) return false;
                 if (msg[1].equals("SWAP")) colour = Common.opp_colour.get(colour);
-                if (msg[3].equals("" + colour)) makeMove(msg[2]);
+                if (msg[3].equals("" + colour)) makeMove(msg[2], msg[1]);
+
                 break;
 
             default:
                 return false;
+        }
+        return true;
+    }
+
+    private boolean shouldSwap(String lastMove){
+        String[] moves = lastMove.split(",");
+        int[] move = new int[]{Integer.parseInt(moves[0]), Integer.parseInt(moves[1])};
+
+        // If move is in dontSwapArray, return false
+        for (int[] position : dontSwapArray){
+            if (position[0] == move[0] && position[1] == move[1]){
+                return false;
+            }
         }
 
         return true;
@@ -118,33 +139,9 @@ class Index{
     public static int[] decideMove(char[][] board, char colour, int turn){
         return agent.MCTS(board, colour, turn);
     }
-    private int[] decideFirstRedMove(){
-        int[] move = new int[2];
-        Random cur = ThreadLocalRandom.current();
-        int firstChoice = cur.nextInt(2);
-        int secondChoice = cur.nextInt(2);
-        int xOffset = cur.nextInt(2);
-        int yOffset = cur.nextInt(2);
 
-        if(firstChoice == 0){
-            // Positive x offset
-            move[1] = xOffset;
-        }
-        else{
-            move[1] = boardSize - 1 - xOffset;
-        }
-
-        if(secondChoice == 0){
-            move[0] = yOffset;
-        }
-        else{
-            move[1] = boardSize - 1 - yOffset;
-        }
-        return move;
-    }
-    public void makeMove(String board){
-
-        int[] move;
+    public void makeMove(String board, String lastMove){
+        String msg;
 
         String[] lines = board.split(",");
         // Interpret board
@@ -156,42 +153,26 @@ class Index{
             }
         }
         if (colour == 'R' && turn == 1){
-            move = decideFirstRedMove();
+            // Always start with the move b2
+            msg = "1,1";
+        }
+        else if (colour == 'B' && turn == 2 && shouldSwap(lastMove)){
+            msg = "SWAP\n";
         }
         else{
-            move = decideMove(curBoard, colour, turn);
+            int[] move = decideMove(curBoard, colour, turn);
+            msg = move[0] + "," + move[1] + "\n";
         }
-        // If it was decided to swap;
-        if(move[0] == -1){
-            sendMessage("SWAP\n");
-            return;
-        }
+
         // Send the move
-        String msg = move[0] + "," + move[1] + "\n";
         sendMessage(msg);
         System.gc();
-        // ArrayList<int[]> choices = new ArrayList<int[]>();
-
-        // for (int i = 0; i < boardSize; i++)
-        //     for (int j = 0; j < boardSize; j++)
-        //         if (lines[i].charAt(j) == '0'){
-        //             int[] newElement = {i, j};
-        //             choices.add(newElement);
-        //         }
-
-        // if (choices.size() > 0){
-        //     int[] choice = choices.get(new Random().nextInt(choices.size()));
-        //     String msg = "" + choice[0] + "," + choice[1] + "\n";
-        //     sendMessage(msg);
-        //}
     }
-
-
 
     public static void main(String[] args){
         // Set parameters
         if(args.length >= 1){
-            MCTSAgent.timeLimitSeconds = Double.parseDouble(args[0]);
+            MCTSAgent.timeLimitSeconds = Integer.parseInt(args[0]);
         }
         if (args.length >= 2){
             MCTSAgent.simulationsCntPerCore = Integer.parseInt(args[1]);
