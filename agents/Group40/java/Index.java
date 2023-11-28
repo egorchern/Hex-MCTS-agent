@@ -24,7 +24,7 @@ class Index{
     private int boardSize = 11;
     public static MCTSAgent agent = new MCTSAgent();
     private final int[][] dontSwapArray = new int[][]{
-            {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, {0, 9}, {0, 10},
+            {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, {0, 9},
             {1, 5},
             {2, 10},
             {8, 0},
@@ -139,8 +139,34 @@ class Index{
     public static int[] decideMove(char[][] board, char colour, int turn){
         return agent.MCTS(board, colour, turn);
     }
+    private int[] decideFirstRedMove(){
+        int[] move = new int[2];
+        Random cur = ThreadLocalRandom.current();
+        int firstChoice = cur.nextInt(2);
+        int secondChoice = cur.nextInt(2);
+        int xOffset = cur.nextInt(2);
+        int yOffset = cur.nextInt(2);
+
+        if(firstChoice == 0){
+            // Positive x offset
+            move[1] = xOffset;
+        }
+        else{
+            move[1] = boardSize - 1 - xOffset;
+        }
+
+        if(secondChoice == 0){
+            move[0] = yOffset;
+        }
+        else{
+            move[1] = boardSize - 1 - yOffset;
+        }
+        return move;
+    }
+
 
     public void makeMove(String board, String lastMove){
+        int[] move;
         String msg;
 
         String[] lines = board.split(",");
@@ -153,14 +179,14 @@ class Index{
             }
         }
         if (colour == 'R' && turn == 1){
-            // Always start with the move b2
-            msg = "1,1";
+            move = decideFirstRedMove();
+            msg = move[0] + "," + move[1] + "\n";
         }
         else if (colour == 'B' && turn == 2 && shouldSwap(lastMove)){
             msg = "SWAP\n";
         }
         else{
-            int[] move = decideMove(curBoard, colour, turn);
+            move = decideMove(curBoard, colour, turn);
             msg = move[0] + "," + move[1] + "\n";
         }
 
@@ -172,7 +198,7 @@ class Index{
     public static void main(String[] args){
         // Set parameters
         if(args.length >= 1){
-            MCTSAgent.timeLimitSeconds = Integer.parseInt(args[0]);
+            MCTSAgent.timeLimitSeconds = Double.parseDouble(args[0]);
         }
         if (args.length >= 2){
             MCTSAgent.simulationsCntPerCore = Integer.parseInt(args[1]);
