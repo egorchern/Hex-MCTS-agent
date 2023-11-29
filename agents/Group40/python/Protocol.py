@@ -6,12 +6,11 @@ from Colour import Colour
 import shlex
 
 
-
 class Protocol():
     """Static class that handles protocol communication between engine and
     agents. Uses a TCP socket.
     """
-    
+
     HOST = "127.0.0.1"
     PORT = 1234
     s = None
