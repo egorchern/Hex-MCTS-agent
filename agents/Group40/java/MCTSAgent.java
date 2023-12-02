@@ -2,6 +2,7 @@ package javaV;
 
 import javaV.common.Common;
 import javaV.policies.backPropogation.MCTSBackPropogation;
+import javaV.policies.expansion.ExpandAll;
 import javaV.policies.expansion.ExpandOneRandom;
 import javaV.policies.rootMoveSelection.SecureChild;
 import javaV.policies.selection.UCT;
@@ -27,7 +28,7 @@ public class MCTSAgent {
         double bestValue = Double.NEGATIVE_INFINITY;
         MCTSNode bestChild = null;
         for (MCTSNode child: root.children){
-            double curValue = UCT.calculateValue(child, root);
+            double curValue = selectionPolicy.calculateValue(child, root);
             if (curValue > bestValue){
                 bestValue = curValue;
                 bestChild = child;
@@ -37,7 +38,7 @@ public class MCTSAgent {
     }
 
     private static MCTSNode[] expand(MCTSNode node, char[][] board){
-        MCTSNode[] newNodes = ExpandOneRandom.generateNewNodes(node, board, Common.opp_colour.get(node.colour));
+        MCTSNode[] newNodes = expansionPolicy.generateNewNodes(node, board, Common.opp_colour.get(node.colour));
         Collections.addAll(node.children, newNodes);
         return newNodes;
     }
@@ -85,20 +86,30 @@ public class MCTSAgent {
         return new int[]{rWins, bWins};
 
     }
+    private static void handleSwapRule(MCTSNode root, char colour, int turn_count, char[][] board){
+        if (!(colour == 'B' && turn_count == 2)){
+            return;
+        }
+        MCTSNode swapNode = new MCTSNode('B', new int[]{-1, -1});
+        root.children.add(swapNode);
+        int[] temp = simulate(swapNode, board);
+        int rWins = temp[0];
+        int bWins = temp[1];
+        //Back-propogation phase
+        //Update the newly expanded node first
+        backPropogationPolicy.update(swapNode, rWins, bWins);
+        backPropogationPolicy.update(root, rWins, bWins);
+    }
 
     private static int[] selectBestMove(MCTSNode root){
-        return SecureChild.getBestChild(root).move;
+        return rootMoveSelectionPolicy.getBestChild(root).move;
     }
 
     public int[] MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
-        // special swap node
-        if (colour == 'B' && turn_count == 2){
-            MCTSNode swapNode = new MCTSNode('B', new int[]{-1, -1});
-            root.children.add(swapNode);
-        }
+        handleSwapRule(root, colour, turn_count, board);
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
             MCTSNode node = root;
             char[][] current_board = Common.copy2dArray(board);
@@ -109,6 +120,7 @@ public class MCTSAgent {
             if (colour == 'B' && turn_count == 2) {
                 nodeSize--;
             }
+            // While current node is fully expanded
             while (nodeSize == Common.getNumLegalMoves(current_board)){
                 node = select(node);
                 nodeSize = node.children.size();
@@ -131,11 +143,11 @@ public class MCTSAgent {
                 int bWins = temp[1];
                 //Back-propogation phase
                 //Update the newly expanded node first
-                MCTSBackPropogation.update(expandedNode, rWins, bWins);
+                backPropogationPolicy.update(expandedNode, rWins, bWins);
                 //Update all nodes on path, going from latest node (LIFO)
                 for(int i = path.size() - 1; i >= 0; i--){
                     MCTSNode nodeOnPath = path.get(i);
-                    MCTSBackPropogation.update(nodeOnPath, rWins, bWins);
+                    backPropogationPolicy.update(nodeOnPath, rWins, bWins);
                 }
             }
         }

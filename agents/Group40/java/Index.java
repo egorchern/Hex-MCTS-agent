@@ -208,7 +208,8 @@ class Index{
 //            }
 //        }
 //        Common.boardSize = 11;
+//        testBoard[5][5] = 'R';
 //        Common.initializeRefVisited();
-//        System.out.println(agent.MCTS(testBoard, 'R', 3));
+//        System.out.println(agent.MCTS(testBoard, 'B', 2));
     }
 }
