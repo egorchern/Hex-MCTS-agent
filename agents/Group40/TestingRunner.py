@@ -4,7 +4,7 @@ from subprocess import run
 def main():
     strength = int(sys.argv[1])
     timesToPlay = int(sys.argv[2])
-    timeLimit = int(sys.argv[3])
+    timeLimit = float(sys.argv[3])
     SimulationsPerThread = int(sys.argv[4])
     C = float(sys.argv[5])
     strengthToCmd = {
