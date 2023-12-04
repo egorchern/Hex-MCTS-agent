@@ -32,7 +32,7 @@ public class BridgePattern {
                 continue;
             }
 
-            if (N - i > patternFindNCuttoff && Common.charOptions[counter & 1] == startingColour){
+            if (N - i > patternFindNCuttoff){
                 ArrayList<Move> patterns = Bridge.findPatterns(currentBoard, lastMove, Common.charOptions[counter & 1]);
                 int numPatterns = patterns.size();
 
