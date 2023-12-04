@@ -1,5 +1,6 @@
 package javaV;
 
+import javaV.common.SimulationResult;
 import javaV.policies.simulation.BridgePattern;
 import javaV.policies.simulation.RandomPlayout;
 
@@ -10,8 +11,7 @@ public class SimulationThread implements Runnable{
     public final char startingColor;
     public final int simulationsCount;
     private final BridgePattern simulationPolicy = new BridgePattern(ThreadLocalRandom.current());
-    public int rWins = 0;
-    public int bWins = 0;
+    public SimulationResult simulationResult = new SimulationResult();
     public SimulationThread(char[][] board, char startingColour, int simulationsCount){
         this.board = board;
         this.startingColor = startingColour;
@@ -30,7 +30,7 @@ public class SimulationThread implements Runnable{
                 localBWins++;
             }
         }
-        rWins = localRWins;
-        bWins = localBWins;
+        simulationResult.rWins = localRWins;
+        simulationResult.bWins = localBWins;
     }
 }

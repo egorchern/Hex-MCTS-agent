@@ -1,6 +1,7 @@
 package javaV;
 
 import javaV.common.Common;
+import javaV.common.Move;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -104,7 +105,7 @@ class Index{
 
             case "CHANGE":
                 if (msg[3].equals("END")) return false;
-                if (msg[1].equals("SWAP")) colour = Common.opp_colour.get(colour);
+                if (msg[1].equals("SWAP")) colour = Common.getOppColour(colour);
                 if (msg[3].equals("" + colour)) makeMove(msg[2]);
                 break;
 
@@ -115,11 +116,11 @@ class Index{
         return true;
     }
 
-    public static int[] decideMove(char[][] board, char colour, int turn){
+    public static Move decideMove(char[][] board, char colour, int turn){
         return agent.MCTS(board, colour, turn);
     }
-    private int[] decideFirstRedMove(){
-        int[] move = new int[2];
+    private Move decideFirstRedMove(){
+        Move move = new Move(0, 0);
         Random cur = ThreadLocalRandom.current();
         int firstChoice = cur.nextInt(2);
         int secondChoice = cur.nextInt(2);
@@ -128,23 +129,23 @@ class Index{
 
         if(firstChoice == 0){
             // Positive x offset
-            move[1] = xOffset;
+            move.x = xOffset;
         }
         else{
-            move[1] = boardSize - 1 - xOffset;
+            move.x = boardSize - 1 - xOffset;
         }
 
         if(secondChoice == 0){
-            move[0] = yOffset;
+            move.y = yOffset;
         }
         else{
-            move[1] = boardSize - 1 - yOffset;
+            move.y = boardSize - 1 - yOffset;
         }
         return move;
     }
     public void makeMove(String board){
 
-        int[] move;
+        Move move;
 
         String[] lines = board.split(",");
         // Interpret board
@@ -162,12 +163,12 @@ class Index{
             move = decideMove(curBoard, colour, turn);
         }
         // If it was decided to swap;
-        if(move[0] == -1){
+        if(move.x == -1){
             sendMessage("SWAP\n");
             return;
         }
         // Send the move
-        String msg = move[0] + "," + move[1] + "\n";
+        String msg = move.y + "," + move.x + "\n";
         sendMessage(msg);
         System.gc();
         // ArrayList<int[]> choices = new ArrayList<int[]>();
