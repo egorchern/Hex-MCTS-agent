@@ -32,15 +32,17 @@ public class BridgePattern {
                 continue;
             }
 
+            if (N - i > patternFindNCuttoff && Common.charOptions[counter & 1] == startingColour){
+                ArrayList<Move> patterns = Bridge.findPatterns(currentBoard, lastMove, Common.charOptions[counter & 1]);
+                int numPatterns = patterns.size();
 
-            ArrayList<Move> patterns = Bridge.findPatterns(currentBoard, lastMove, Common.charOptions[counter & 1]);
-            int numPatterns = patterns.size();
-
-            if (numPatterns > 0) {
-                int randomIndex = randomSource.nextInt(0, numPatterns);
-                move = patterns.get(randomIndex);
-                excludedMoves.add(move);
+                if (numPatterns > 0) {
+                    int randomIndex = randomSource.nextInt(0, numPatterns);
+                    move = patterns.get(randomIndex);
+                    excludedMoves.add(move);
+                }
             }
+
 
 
 
