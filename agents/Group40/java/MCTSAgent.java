@@ -102,7 +102,7 @@ public class MCTSAgent {
             ArrayList<MCTSNode> path = new ArrayList<MCTSNode>();
             path.add(node);
             int nodeSize = node.children.size();
-            while (nodeSize == Common.getNumLegalMoves(current_board)){
+            while (node.children.size() == Common.getNumLegalMoves(current_board)){
                 node = select(node);
                 nodeSize = node.children.size();
                 path.add(node);
