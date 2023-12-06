@@ -229,9 +229,13 @@ class Index{
 //                testBoard[i][j] = '0';
 //            }
 //        }
+//        testBoard[2][10] = 'R';
 //        Common.boardSize = 11;
 //        testBoard[5][5] = 'R';
 //        Common.initializeRefVisited();
 //        System.out.println(agent.MCTS(testBoard, 'B', 2));
+//        intr.colour = 'B';
+//        intr.turn = 2;
+//        intr.makeMove("00000000000,00000000000,0000000000R,00000000000,00000000000,00000000000,00000000000,00000000000,00000000000,00000000000,00000000000", "2,10");
     }
 }
