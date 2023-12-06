@@ -9,9 +9,9 @@ def main():
     C = float(sys.argv[5])
     strengthToCmd = {
     1: "agents/TestAgents/alice/alice",
-    3: "./agents/TestAgents/joni/joniagent",
     2: "./agents/TestAgents/bob/bobagent",
-    4: f"java -jar agents/TestAgents/rita/rita.jar",
+    3: "./agents/TestAgents/joni/joniagent --agent minimax --depth 2 --heuristic monte-carlo --num-playouts 500",
+    4: "java -jar agents/TestAgents/rita/rita.jar",
     5: "./agents/TestAgents/jimmie/Agentjimmie"
 }
 
