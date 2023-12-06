@@ -1,6 +1,7 @@
 package javaV;
 
 import javaV.common.Common;
+import javaV.common.Move;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -111,8 +112,10 @@ class Index{
 
             case "CHANGE":
                 if (msg[3].equals("END")) return false;
-                if (msg[1].equals("SWAP")) colour = Common.opp_colour.get(colour);
+                if (msg[1].equals("SWAP")) colour = Common.getOppColour(colour);
                 if (msg[3].equals("" + colour)) makeMove(msg[2], msg[1]);
+                
+                
 
                 break;
 
@@ -136,11 +139,11 @@ class Index{
         return true;
     }
 
-    public static int[] decideMove(char[][] board, char colour, int turn){
+    public static Move decideMove(char[][] board, char colour, int turn){
         return agent.MCTS(board, colour, turn);
     }
-    private int[] decideFirstRedMove(){
-        int[] move = new int[2];
+    private Move decideFirstRedMove(){
+        Move move = new Move(0, 0);
         Random cur = ThreadLocalRandom.current();
         int firstChoice = cur.nextInt(2);
         int secondChoice = cur.nextInt(2);
@@ -149,25 +152,25 @@ class Index{
 
         if(firstChoice == 0){
             // Positive x offset
-            move[1] = xOffset;
+            move.x = xOffset;
         }
         else{
-            move[1] = boardSize - 1 - xOffset;
+            move.x = boardSize - 1 - xOffset;
         }
 
         if(secondChoice == 0){
-            move[0] = yOffset;
+            move.y = yOffset;
         }
         else{
-            move[1] = boardSize - 1 - yOffset;
+            move.y = boardSize - 1 - yOffset;
         }
         return move;
     }
 
 
     public void makeMove(String board, String lastMove){
-        int[] move;
         String msg;
+        Move move;
 
         String[] lines = board.split(",");
         // Interpret board
@@ -180,17 +183,29 @@ class Index{
         }
         if (colour == 'R' && turn == 1){
             move = decideFirstRedMove();
-            msg = move[0] + "," + move[1] + "\n";
         }
-        else if (colour == 'B' && turn == 2 && shouldSwap(lastMove)){
-            msg = "SWAP\n";
+        else if (colour == 'B' && turn == 2){
+            try {
+                if (shouldSwap(lastMove)) {
+                    move = new Move(-1, -1);
+                } else {
+                    move = decideMove(curBoard, colour, turn);
+                }
+            } catch (Exception e) {
+                move = decideMove(curBoard, colour, turn);
+            }
+            
         }
         else{
             move = decideMove(curBoard, colour, turn);
-            msg = move[0] + "," + move[1] + "\n";
         }
-
+        // If it was decided to swap;
+        if(move.x == -1){
+            sendMessage("SWAP\n");
+            return;
+        }
         // Send the move
+        msg = move.y + "," + move.x + "\n";
         sendMessage(msg);
         System.gc();
     }
@@ -215,7 +230,8 @@ class Index{
 //            }
 //        }
 //        Common.boardSize = 11;
+//        testBoard[5][5] = 'R';
 //        Common.initializeRefVisited();
-//        System.out.println(agent.MCTS(testBoard, 'R', 3));
+//        System.out.println(agent.MCTS(testBoard, 'B', 2));
     }
 }

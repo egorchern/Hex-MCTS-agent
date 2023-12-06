@@ -3,13 +3,15 @@ package javaV.common;
 import java.util.*;
 
 public class Common {
-    public static Map<Character, Character> opp_colour = new HashMap<Character, Character>(){
-        {
-            put('R', 'B');
-            put('B', 'R');
-        }
-        
-    };
+
+    public static char getOppColour(char curColour){
+        return switch (curColour) {
+            case ('R') -> 'B';
+            case ('B') -> 'R';
+            default -> '0';
+        };
+    }
+
     public static int boardSize;
     public static char[] charOptions = new char[]{'R', 'B'};
     private static boolean[][] RefVisited;
@@ -39,13 +41,13 @@ public class Common {
         return movesCnt;
     }
 
-    public static ArrayList<int[]> getLegalMoves(char[][] board){
-        ArrayList<int[]> moves = new ArrayList<int[]>();
-        for(int i = 0; i < boardSize; i++){
-            for (int j = 0; j < boardSize; j++){
-                if (board[i][j] == '0'){
-                    int[] move = {i, j};
-                    moves.add(move);
+    public static ArrayList<Move> getLegalMoves(char[][] board){
+        ArrayList<Move> moves = new ArrayList<>();
+        for(int idy = 0; idy < boardSize; idy++){
+            for (int idx = 0; idx < boardSize; idx++){
+                if (board[idy][idx] == '0'){
+
+                    moves.add(new Move(idy, idx));
                 }
             }
         }
@@ -53,14 +55,14 @@ public class Common {
     }
 
 
-    public static ArrayList<int[]> getLegalMovesExcept(char[][] board, Set<List<Integer>> exceptSet){
-        ArrayList<int[]> moves = new ArrayList<int[]>();
-        for(int i = 0; i < boardSize; i++){
-            for (int j = 0; j < boardSize; j++){
-                if (board[i][j] == '0'){
-                    int[] move = {i, j};
-                    List<Integer> key = Arrays.stream(move).boxed().toList();
-                    if (!exceptSet.contains(key)){
+    public static ArrayList<Move> getLegalMovesExcept(char[][] board, Set<Move> exceptSet){
+        ArrayList<Move> moves = new ArrayList<>();
+        for(int idy = 0; idy < boardSize; idy++){
+            for (int idx = 0; idx < boardSize; idx++){
+                if (board[idy][idx] == '0'){
+
+                    Move move = new Move(idy, idx);
+                    if (!exceptSet.contains(move)){
                         moves.add(move);
                     }
 
