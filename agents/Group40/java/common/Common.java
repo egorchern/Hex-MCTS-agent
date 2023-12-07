@@ -13,7 +13,7 @@ public class Common {
     }
 
     public static int boardSize;
-    public static char[] charOptions = new char[]{'R', 'B'};
+    public static final char[] charOptions = new char[]{'R', 'B'};
     private static boolean[][] RefVisited;
     public static void initializeRefVisited(){
         RefVisited = new boolean[boardSize][boardSize];
@@ -74,8 +74,8 @@ public class Common {
 
     private static boolean DFSColourFullyConnected(int x, int y, char colour, boolean[][] visited, char[][] board){
         visited[y][x] = true;
-        int yLen = boardSize;
-        int xLen = boardSize;
+        final int yLen = boardSize;
+        final int xLen = boardSize;
         // Win Conds
         if (colour == 'R' && y == yLen - 1){
             return true;
@@ -163,14 +163,13 @@ public class Common {
 
     public static char getWinnerFullBoard(char[][] board){
 
-        int yLen = boardSize;
-        int xLen = boardSize;
+        final int yLen = boardSize;
         boolean[][] visited = Arrays.stream(RefVisited).map(boolean[]::clone).toArray(boolean[][]::new);
         // Check Blue
         for (int idy = 0; idy < yLen; idy++){
             char cell = board[idy][0];
             if (!visited[idy][0] && cell == 'B'){
-                boolean isConnected = DFSColourFullyConnected(0, idy, 'B', visited, board);
+                final boolean isConnected = DFSColourFullyConnected(0, idy, 'B', visited, board);
                 if (isConnected){
                     return 'B';
                 }

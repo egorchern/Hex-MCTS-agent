@@ -30,7 +30,7 @@ public class MCTSAgent {
         double bestValue = Double.NEGATIVE_INFINITY;
         MCTSNode bestChild = null;
         for (MCTSNode child: root.children){
-            double curValue = selectionPolicy.calculateValue(child, root);
+            final double curValue = selectionPolicy.calculateValue(child, root);
             if (curValue > bestValue){
                 bestValue = curValue;
                 bestChild = child;
@@ -109,26 +109,31 @@ public class MCTSAgent {
         root = new MCTSNode(colour);
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
+        int iterations = 0;
+        int maxDepth = 0;
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
+            iterations++;
             MCTSNode node = root;
             char[][] current_board = Common.copy2dArray(board);
             // Selection phase
             ArrayList<MCTSNode> path = new ArrayList<MCTSNode>();
             path.add(node);
+            int curDepth = 0;
             while (node.children.size() == Common.getNumLegalMoves(current_board)){
+                curDepth++;
                 node = select(node);
                 path.add(node);
-                Move move = node.move;
+                final Move move = node.move;
                 current_board[move.y][move.x] = Common.getOppColour(node.colour);
             }
             // Expansion phase
-            MCTSNode[] expandedNodes = expand(node, current_board);
+            final MCTSNode[] expandedNodes = expand(node, current_board);
             // Simulation Phase
             for(MCTSNode expandedNode : expandedNodes){
                 char[][] simulationBoard = Common.copy2dArray(current_board);
-                Move move = expandedNode.move;
+                final Move move = expandedNode.move;
                 simulationBoard[move.y][move.x] = Common.getOppColour(expandedNode.colour);
-                SimulationResult simulationResult = simulate(expandedNode, simulationBoard);
+                final SimulationResult simulationResult = simulate(expandedNode, simulationBoard);
                 //Back-propogation phase
                 //Update the newly expanded node first
                 backPropogationPolicy.update(expandedNode, simulationResult);
@@ -138,8 +143,11 @@ public class MCTSAgent {
                     backPropogationPolicy.update(nodeOnPath, simulationResult);
                 }
             }
+            maxDepth = Math.max(maxDepth, curDepth);
         }
-        Move bestMove = selectBestMove(root);
+        System.out.println(iterations);
+        System.out.println(maxDepth);
+        final Move bestMove = selectBestMove(root);
         root = null;
         return bestMove;
     }
