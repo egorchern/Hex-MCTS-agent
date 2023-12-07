@@ -3,6 +3,7 @@ package javaV;
 import javaV.common.Common;
 import javaV.common.Move;
 import javaV.common.SimulationResult;
+import javaV.common.UnionFind;
 import javaV.policies.backPropogation.MCTSBackPropogation;
 import javaV.policies.expansion.ExpandAll;
 import javaV.policies.expansion.ExpandOneRandom;
@@ -43,9 +44,6 @@ public class MCTSAgent {
     private static MCTSNode[] expand(MCTSNode node, char[][] board){
         MCTSNode[] newNodes = expansionPolicy.generateNewNodes(node, board, Common.getOppColour(node.colour));
         Collections.addAll(node.children, newNodes);
-//        for (MCTSNode child : newNodes){
-//
-//        }
         return newNodes;
     }
 
@@ -55,7 +53,7 @@ public class MCTSAgent {
         Thread[] threads = new Thread[cores];
         SimulationThread[] threadInfos = new SimulationThread[cores];
         for (int i = 0; i < threads.length; i++){
-            threadInfos[i] = new SimulationThread(board, node.colour, simulationsCntPerCore);
+            threadInfos[i] = new SimulationThread(board, node, simulationsCntPerCore);
             threads[i] = new Thread(threadInfos[i]);
             threads[i].start();
 
@@ -114,7 +112,10 @@ public class MCTSAgent {
         root.connectivity = Common.createConnectivity(board);
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
+        int iterations = 0;
+
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
+            iterations++;
             MCTSNode node = root;
             char[][] current_board = Common.copy2dArray(board);
             // Selection phase
@@ -134,6 +135,8 @@ public class MCTSAgent {
                 char[][] simulationBoard = Common.copy2dArray(current_board);
                 final Move move = expandedNode.move;
                 simulationBoard[move.y][move.x] = Common.getOppColour(expandedNode.colour);
+                expandedNode.connectivity = new UnionFind(node.connectivity);
+                Common.updateConnectivity(board, expandedNode.connectivity, move.y, move.x);
                 final SimulationResult simulationResult = simulate(expandedNode, simulationBoard);
                 //Back-propogation phase
                 //Update the newly expanded node first
@@ -144,6 +147,7 @@ public class MCTSAgent {
                 }
             }
         }
+        System.out.println(iterations);
         final Move bestMove = selectBestMove(root);
         root = null;
         return bestMove;

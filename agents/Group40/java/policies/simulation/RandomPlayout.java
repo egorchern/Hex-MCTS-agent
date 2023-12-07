@@ -1,7 +1,9 @@
 package javaV.policies.simulation;
 
+import javaV.MCTSNode;
 import javaV.common.Common;
 import javaV.common.Move;
+import javaV.common.UnionFind;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,18 +14,21 @@ public class RandomPlayout {
         randomSource = src;
     }
 
-    public char playout(char[][] board, char startingColour){
+    public final char playout(char[][] board, MCTSNode node){
         //Optimised random playout: get legal moves, shuffle that array and play in that order
         //Then check who won, no need to check after each move
         final List<Move> moves = Common.getLegalMoves(board);
         // Shuffle in place
         Collections.shuffle(moves, randomSource);
-        char[][] currentBoard = Common.copy2dArray(board);
-        int counter = startingColour == 'R' ? 0 : 1;
+        final char[][] currentBoard = Common.copy2dArray(board);
+        final UnionFind curConnectivity = new UnionFind(node.connectivity);
+        int counter = node.colour == 'R' ? 0 : 1;
         for(final Move move: moves){
             currentBoard[move.y][move.x] = Common.charOptions[counter++ & 1];
+            Common.updateConnectivity(currentBoard, curConnectivity, move.y, move.x);
         }
-        return Common.getWinnerFullBoard(currentBoard);
+        final boolean isBlueWinner = Common.isBlueWinnerUsingConnectivity(curConnectivity, currentBoard);
+        return isBlueWinner ? 'B' : 'R';
     }
 
 }

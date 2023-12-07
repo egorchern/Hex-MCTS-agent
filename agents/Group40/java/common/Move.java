@@ -17,6 +17,6 @@ public class Move {
     public boolean equals (Object o){
         if(! (o instanceof Move)) return false;
         Move move = (Move) o;
-        return move.x == x && move.y == y;
+        return (move.x == x && move.y == y);
     }
 }

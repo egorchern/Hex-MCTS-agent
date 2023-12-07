@@ -131,20 +131,20 @@ public class Common {
 
     }
     public static boolean isBlueWinnerUsingConnectivity(UnionFind connectivity, char[][] board){
-        LinkedList<Integer> startPoints = new LinkedList<>();
-        LinkedList<Integer> endPoints = new LinkedList<>();
+        final LinkedList<Move> startPoints = new LinkedList<>();
+        final LinkedList<Move> endPoints = new LinkedList<>();
         for (int idy = 0; idy < boardSize; idy++){
             if (board[idy][0] == 'B'){
-                final int startRowMajor = getRowMajor(idy, 0);
-                startPoints.add(startRowMajor);
+                final Move startMove = new Move(idy, 0);
+                startPoints.add(startMove);
             }
             if (board[idy][boardSize - 1] == 'B'){
-                final int endRowMajor = getRowMajor(idy, boardSize - 1);
-                endPoints.add(endRowMajor);
+                final Move endMove = new Move(idy, boardSize - 1);
+                endPoints.add(endMove);
             }
         }
-        for (final int startPoint : startPoints) {
-            for (final int endPoint : endPoints) {
+        for (final Move startPoint : startPoints) {
+            for (final Move endPoint : endPoints) {
                 final boolean connected = connectivity.find(startPoint) == connectivity.find(endPoint);
                 if (connected) {
                     return true;
@@ -157,39 +157,39 @@ public class Common {
         return idx + (idy * boardSize);
     }
     public static void updateConnectivity(char[][] board, UnionFind connectivity, int idy, int idx){
-        final int referenceRowMajor = getRowMajor(idy, idx);
+        final Move referenceMove = new Move(idy, idx);
         final char curColour = board[idy][idx];
         final int xLen = boardSize;
         final int yLen = boardSize;
         // Go through neighbours and union all of them with current cell
         if (idx - 1 >= 0 && board[idy][idx - 1] == curColour){
-            final int curRowMajor = getRowMajor(idy, idx - 1);
-            connectivity.union(referenceRowMajor, curRowMajor);
+            final Move curMove = new Move(idy, idx - 1);
+            connectivity.union(referenceMove, curMove);
         }
         // Down
         if (idx + 1 < xLen && board[idy][idx + 1] == curColour){
-            final int curRowMajor = getRowMajor(idy, idx + 1);
-            connectivity.union(referenceRowMajor, curRowMajor);
+            final Move curMove = new Move(idy, idx + 1);
+            connectivity.union(referenceMove, curMove);
         }
         // Left
         if (idy - 1 >= 0 && board[idy - 1][idx] == curColour){
-            final int curRowMajor = getRowMajor(idy - 1, idx);
-            connectivity.union(referenceRowMajor, curRowMajor);
+            final Move curMove = new Move(idy - 1, idx);
+            connectivity.union(referenceMove, curMove);
         }
         // Right
         if (idy + 1 < yLen && board[idy + 1][idx] == curColour){
-            final int curRowMajor = getRowMajor(idy + 1, idx);
-            connectivity.union(referenceRowMajor, curRowMajor);
+            final Move curMove = new Move(idy + 1, idx);
+            connectivity.union(referenceMove, curMove);
         }
         // Diagnal L
         if (idx - 1 >= 0 && idy + 1 < yLen && board[idy + 1][idx - 1] == curColour){
-            final int curRowMajor = getRowMajor(idy + 1, idx - 1);
-            connectivity.union(referenceRowMajor, curRowMajor);
+            final Move curMove = new Move(idy + 1, idx - 1);
+            connectivity.union(referenceMove, curMove);
         }
         // Diagnal R
         if (idx + 1 < xLen && idy - 1 >= 0 && board[idy - 1][idx + 1] == curColour){
-            final int curRowMajor = getRowMajor(idy - 1, idx + 1);
-            connectivity.union(referenceRowMajor, curRowMajor);
+            final Move curMove = new Move(idy - 1, idx + 1);
+            connectivity.union(referenceMove, curMove);
         }
 
     }

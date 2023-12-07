@@ -1,63 +1,67 @@
 package javaV.common;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class UnionFind {
-    private final int[] parentArr;
-    private final int[] rank;
+    private final Move[][] parentArr;
+    private final int[][] rank;
 
     public UnionFind(int size){
-        parentArr = new int[size];
-        rank = new int[size];
-        for (int i = 0; i < size; i++){
-            parentArr[i] = i;
-            rank[i] = 0;
+        parentArr = new Move[size][size];
+        rank = new int[size][size];
+        for (int idy = 0; idy < size; idy++){
+            for(int idx = 0; idx < size; idx++){
+                parentArr[idy][idx] = new Move(idy, idx);
+                rank[idy][idx] = 0;
+            }
+
         }
     }
     // Copy constructor
     public UnionFind(UnionFind prev){
-        parentArr = prev.parentArr.clone();
-        rank = prev.parentArr.clone();
+        parentArr = Arrays.stream(prev.parentArr).map(Move[]::clone).toArray(Move[][]::new);
+        rank = Arrays.stream(prev.rank).map(int[]::clone).toArray(int[][]::new);
     }
 
     // Find with Path compression
-    public int find(int i){
-        int curI = i;
-        int parent = parentArr[curI];
-        final Queue<Integer> path = new LinkedList<>();
-        while (parent != curI){
-            path.add(curI);
-            curI = parent;
-            parent = parentArr[curI];
+    public Move find(Move move){
+        Move curMove = move;
+        Move parent = parentArr[curMove.y][curMove.x];
+//        final Queue<Integer> path = new LinkedList<>();
+        while (parent != curMove){
+//            path.add(curI);
+            curMove = parent;
+            parent = parentArr[curMove.y][curMove.x];
         }
-        for (final int idx : path) {
-            parentArr[idx] = parent;
-        }
+//        for (final int idx : path) {
+//            parentArr[idx] = parent;
+//        }
         return parent;
     }
     // Union with Union by rank
-    public void union(int a, int b){
-        final int aRep = find(a);
-        final int bRep = find(b);
+    public void union(Move a, Move b){
+        final Move aRep = find(a);
+        final Move bRep = find(b);
         if (aRep == bRep){
             return;
         }
-        final int aRank = rank[aRep];
-        final int bRank = rank[bRep];
+        final int aRank = rank[aRep.y][aRep.x];
+        final int bRank = rank[bRep.y][bRep.x];
         // path compress straight away
         if (aRank < bRank){
-            parentArr[aRep] = bRep;
-            parentArr[a] = bRep;
+            parentArr[aRep.y][aRep.x] = bRep;
+            parentArr[a.y][a.x] = bRep;
         }
         else if(aRank > bRank){
-            parentArr[bRep] = aRep;
-            parentArr[b] = aRep;
+            parentArr[bRep.y][bRep.x] = aRep;
+            parentArr[b.y][b.x] = aRep;
         }
         else{
-            parentArr[aRep] = bRep;
-            parentArr[a] = bRep;
-            rank[bRep]++;
+            parentArr[aRep.y][aRep.x] = bRep;
+            parentArr[a.y][a.x] = bRep;
+            rank[bRep.y][bRep.x]++;
         }
 
     }
