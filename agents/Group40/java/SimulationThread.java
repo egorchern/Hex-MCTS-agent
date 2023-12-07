@@ -11,7 +11,7 @@ public class SimulationThread implements Runnable{
     public final char[][] board;
     public final char startingColor;
     public final int simulationsCount;
-    private final BridgeOpponentOnly simulationPolicy = new BridgeOpponentOnly(ThreadLocalRandom.current());
+    private final BridgePattern simulationPolicy = new BridgePattern(ThreadLocalRandom.current());
     public SimulationResult simulationResult = new SimulationResult();
     public SimulationThread(char[][] board, char startingColour, int simulationsCount){
         this.board = board;
