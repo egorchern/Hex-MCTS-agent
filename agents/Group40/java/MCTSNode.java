@@ -1,6 +1,7 @@
 package javaV;
 
 import javaV.common.Move;
+import javaV.common.UnionFind;
 
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ public class MCTSNode {
     public long N;
     public long Q;
     public Move move = null;
+    public UnionFind connectivity = null;
     public char colour;
     public MCTSNode(char cColour){
         colour = cColour;
