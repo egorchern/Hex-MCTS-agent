@@ -17,6 +17,9 @@ public class MCTSAgent {
     public static int simulationsCntPerCore = 200;
     public static double timeLimitSeconds = 7;
     public static double C = 0.4;
+    public static final double initialTimeLimit = 9.5;
+    public static final double finalTimeLimit = 1.3;
+    public static final int maxTurns = 61;
     // Policies
     private static final UCT selectionPolicy = new UCT();
     private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
@@ -87,18 +90,8 @@ public class MCTSAgent {
         return simulationResult;
 
     }
-    private static void handleSwapRule(MCTSNode root, char colour, int turn_count, char[][] board){
-        if (!(colour == 'B' && turn_count == 2)){
-            return;
-        }
-        MCTSNode swapNode = new MCTSNode('B', new Move(-1, -1));
-        root.children.add(swapNode);
-        SimulationResult simulationResult = simulate(swapNode, board);
-
-        //Back-propogation phase
-        //Update the newly expanded node first
-        backPropogationPolicy.update(swapNode, simulationResult);
-        backPropogationPolicy.update(root, simulationResult);
+    private double calculate_time_limit(int current_turn, double initial_time_limit, int max_turns, double final_time_limit){
+        return initial_time_limit + (current_turn - 1) * (final_time_limit - initial_time_limit) / (max_turns - 1);
     }
 
     private static Move selectBestMove(MCTSNode root){
@@ -107,6 +100,7 @@ public class MCTSAgent {
 
     public Move MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
+        timeLimitSeconds = calculate_time_limit((int) Math.ceil(turn_count/2), initialTimeLimit, maxTurns, finalTimeLimit);
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
