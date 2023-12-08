@@ -15,9 +15,9 @@ import java.util.Stack;
 
 public class MCTSAgent {
     // Parameters
-    public static int simulationsCntPerCore = 200;
-    public static double timeLimitSeconds = 7;
-    public static double C = 0.4;
+    public static int simulationsCntPerCore = 135;
+    public static double timeLimitSeconds = 6.5;
+    public static double C = 0.5;
     // Policies
     private static final UCT selectionPolicy = new UCT();
     private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
@@ -111,7 +111,6 @@ public class MCTSAgent {
 
     public Move MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
-        root.connectivity = Common.createConnectivity(board);
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
@@ -119,7 +118,6 @@ public class MCTSAgent {
             char[][] current_board = Common.copy2dArray(board);
             // Selection phase
             Stack<MCTSNode> path = new Stack<>();
-//            ArrayList<MCTSNode> path = new ArrayList<MCTSNode>();
             path.add(node);
             while (node.children.size() == Common.getNumLegalMoves(current_board)){
                 node = select(node);
