@@ -42,7 +42,7 @@ public class Common {
     }
 
     public static ArrayList<Move> getLegalMoves(char[][] board){
-        ArrayList<Move> moves = new ArrayList<>();
+        final ArrayList<Move> moves = new ArrayList<>();
         for(int idy = 0; idy < boardSize; idy++){
             for (int idx = 0; idx < boardSize; idx++){
                 if (board[idy][idx] == '0'){
@@ -56,12 +56,12 @@ public class Common {
 
 
     public static ArrayList<Move> getLegalMovesExcept(char[][] board, Set<Move> exceptSet){
-        ArrayList<Move> moves = new ArrayList<>();
+        final ArrayList<Move> moves = new ArrayList<>();
         for(int idy = 0; idy < boardSize; idy++){
             for (int idx = 0; idx < boardSize; idx++){
                 if (board[idy][idx] == '0'){
 
-                    Move move = new Move(idy, idx);
+                    final Move move = new Move(idy, idx);
                     if (!exceptSet.contains(move)){
                         moves.add(move);
                     }
@@ -236,10 +236,10 @@ public class Common {
     public static char getWinnerFullBoard(char[][] board){
 
         final int yLen = boardSize;
-        boolean[][] visited = Arrays.stream(RefVisited).map(boolean[]::clone).toArray(boolean[][]::new);
+        final boolean[][] visited = Arrays.stream(RefVisited).map(boolean[]::clone).toArray(boolean[][]::new);
         // Check Blue
         for (int idy = 0; idy < yLen; idy++){
-            char cell = board[idy][0];
+            final char cell = board[idy][0];
             if (!visited[idy][0] && cell == 'B'){
                 final boolean isConnected = DFSColourFullyConnected(0, idy, 'B', visited, board);
                 if (isConnected){

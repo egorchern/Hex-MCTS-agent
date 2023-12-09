@@ -1,7 +1,6 @@
 package javaV;
 
 import javaV.common.Move;
-import javaV.common.UnionFind;
 
 import java.util.ArrayList;
 

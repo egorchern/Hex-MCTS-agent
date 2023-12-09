@@ -24,7 +24,7 @@ public class BridgePattern {
         final List<Move> moves = Common.getLegalMoves(board);
         // Shuffle in place
         Collections.shuffle(moves, randomSource);
-        char[][] currentBoard = Common.copy2dArray(board);
+        final char[][] currentBoard = Common.copy2dArray(board);
         int counter = startingColour == 'R' ? 0 : 1;
         final int N = moves.size();
         Move lastMove = moves.get(0);

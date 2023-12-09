@@ -15,7 +15,7 @@ import java.util.Stack;
 
 public class MCTSAgent {
     // Parameters
-    public static int simulationsCntPerCore = 135;
+    public static int simulationsCntPerCore = 115;
     public static double timeLimitSeconds = 6.5;
     public static double C = 0.5;
     // Policies

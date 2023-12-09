@@ -1,6 +1,7 @@
 package javaV;
 
 import javaV.common.SimulationResult;
+import javaV.policies.patterns.Bridge;
 import javaV.policies.simulation.BridgeOpponentOnly;
 import javaV.policies.simulation.BridgePattern;
 import javaV.policies.simulation.RandomPlayout;
