@@ -141,6 +141,16 @@ public class MCTSAgent {
                     backPropogationPolicy.update(nodeOnPath, simulationResult);
                 }
             }
+            // If there are no expanded nodes : reached end, which is unlikely but may happen
+            // Simply run simulations on that node
+            if (expandedNodes.length == 0){
+
+                final SimulationResult simulationResult = simulate(node, current_board);
+
+                for(MCTSNode nodeOnPath : path){
+                    backPropogationPolicy.update(nodeOnPath, simulationResult);
+                }
+            }
         }
         final Move bestMove = selectBestMove(root);
         root = null;

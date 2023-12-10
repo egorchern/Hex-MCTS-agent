@@ -15,7 +15,9 @@ public class ExpandOneRandom {
             expandedMoves.add(move);
         }
         final ArrayList<Move> moves = Common.getLegalMovesExcept(board, expandedMoves);
-
+        if (moves.isEmpty()){
+            return new MCTSNode[0];
+        }
         final int randomIndex = ThreadLocalRandom.current().nextInt(0, moves.size());
 
         final Move move = moves.get(randomIndex);
