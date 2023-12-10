@@ -19,13 +19,13 @@ def main():
     OurCmd = f"java -cp agents/Group40/java/dist/Group40.jar javaV.Index {timeLimit} {SimulationsPerThread} {C}"
     # Play ours as red
     for i in range(timesToPlay):
-        command = ["python3", "Hex.py", f"a=Ours;{OurCmd}", f"a=Enemy;{EnemyCmd}", "-p", "-v", "-l"]
+        command = ["python3", "Hex.py", f"a=Ours;{OurCmd}", f"a=Enemy;{EnemyCmd}", "-l"]
         process = run(command)
         process.check_returncode()
     
     # Play ours as blue
     for i in range(timesToPlay):
-        command = ["python3", "Hex.py", f"a=Ours;{OurCmd}", f"a=Enemy;{EnemyCmd}", "-p", "-v", "-s", "-l"]
+        command = ["python3", "Hex.py", f"a=Ours;{OurCmd}", f"a=Enemy;{EnemyCmd}", "-s", "-l"]
         process = run(command)
         process.check_returncode()
 
