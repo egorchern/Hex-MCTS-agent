@@ -15,6 +15,8 @@ public class Move {
 
     @Override
     public boolean equals (Object o){
-        return hashCode() == o.hashCode();
+        if(! (o instanceof Move)) return false;
+        Move move = (Move) o;
+        return move.x == x && move.y == y;
     }
 }

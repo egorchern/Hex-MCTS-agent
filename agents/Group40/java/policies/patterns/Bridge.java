@@ -72,64 +72,46 @@ public class Bridge {
 
     public static ArrayList<Move> findPatterns(char[][] board, Move lastMove, char curColour){
         ArrayList<Move> patterns = new ArrayList<>();
-        int yLen = board.length;
-        int xLen = board[0].length;
-        int idx = lastMove.x;
-        int idy = lastMove.y;
+        final int yLen = board.length;
+        final int xLen = board[0].length;
+        final int idx = lastMove.x;
+        final int idy = lastMove.y;
         // downwards bridges
         // Left
         if (idy - 1 >= 0 && idy + 1 < yLen && idx - 1 >= 0){
-            char bridgeStartPoint = board[idy - 1][idx];
-            char bridgeEndPoint = board[idy + 1][idx - 1];
-            char inBetween = board[idy][idx - 1];
-            if (bridgeStartPoint == curColour && bridgeEndPoint == curColour && inBetween == '0'){
+            if (board[idy - 1][idx] == curColour && board[idy + 1][idx - 1] == curColour && board[idy][idx - 1] == '0'){
                 patterns.add(new Move(idy, idx - 1));
             }
         }
         // Right
         if(idy - 1 >= 0 && idy + 1 < yLen && idx + 1 < xLen){
-            char bridgeStartPoint = board[idy - 1][idx + 1];
-            char bridgeEndPoint = board[idy + 1][idx];
-            char inBetween = board[idy][idx + 1];
-            if (bridgeStartPoint == curColour && bridgeEndPoint == curColour && inBetween == '0'){
+            if (board[idy - 1][idx + 1] == curColour && board[idy + 1][idx] == curColour && board[idy][idx + 1] == '0'){
                 patterns.add(new Move(idy, idx + 1));
             }
         }
         // Left to right diagnals
         // Right
         if(idy - 1 >= 0 && idx + 1 < xLen){
-            char bridgeStartPoint = board[idy - 1][idx];
-            char bridgeEndPoint = board[idy][idx + 1];
-            char inBetween = board[idy - 1][idx + 1];
-            if (bridgeStartPoint == curColour && bridgeEndPoint == curColour && inBetween == '0'){
+            if (board[idy - 1][idx] == curColour && board[idy][idx + 1] == curColour && board[idy - 1][idx + 1] == '0'){
                 patterns.add(new Move(idy - 1, idx + 1));
             }
         }
         // Left
         if(idy + 1 < yLen && idx - 1 >= 0){
-            char bridgeStartPoint = board[idy][idx - 1];
-            char bridgeEndPoint = board[idy + 1][idx];
-            char inBetween = board[idy + 1][idx - 1];
-            if (bridgeStartPoint == curColour && bridgeEndPoint == curColour && inBetween == '0'){
+            if (board[idy][idx - 1] == curColour && board[idy + 1][idx] == curColour && board[idy + 1][idx - 1] == '0'){
                 patterns.add(new Move(idy + 1, idx - 1));
             }
         }
         // Right to left diagnals
         // Left
         if (idy - 1 >= 0 && idx + 1 < xLen && idx - 1 >= 0){
-            char bridgeStartPoint = board[idy - 1][idx + 1];
-            char bridgeEndPoint = board[idy][idx - 1];
-            char inBetween = board[idy - 1][idx];
-            if (bridgeStartPoint == curColour && bridgeEndPoint == curColour && inBetween == '0'){
+            if (board[idy - 1][idx + 1] == curColour && board[idy][idx - 1] == curColour && board[idy - 1][idx] == '0'){
                 patterns.add(new Move(idy - 1, idx));
             }
         }
         // Right
         if (idy + 1 < yLen && idx + 1 < xLen && idx - 1 >= 0){
-            char bridgeStartPoint = board[idy][idx + 1];
-            char bridgeEndPoint = board[idy + 1][idx - 1];
-            char inBetween = board[idy + 1][idx];
-            if (bridgeStartPoint == curColour && bridgeEndPoint == curColour && inBetween == '0'){
+            if (board[idy][idx + 1] == curColour && board[idy + 1][idx - 1] == curColour && board[idy + 1][idx] == '0'){
                 patterns.add(new Move(idy + 1, idx));
             }
         }
