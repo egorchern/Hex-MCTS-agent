@@ -20,23 +20,22 @@ public class BridgePattern {
 
     private static void processLGR(ArrayDeque<Move> moveHistory, Map<Move, Move> LGR1Map, char winnerColour, char startingColour) {
         // Record successfull replies
-        if (winnerColour == startingColour) {
-            final int N = moveHistory.size();
-            for (int i = 0; i < N - 1; i++){
-                final Move reply = moveHistory.removeLast();
-                final Move move = moveHistory.peekLast();
+
+        final int N = moveHistory.size();
+        for (int i = 0; i < N - 1; i++) {
+            final Move reply = moveHistory.removeLast();
+            final Move move = moveHistory.peekLast();
+            if (winnerColour == reply.colour) {
                 LGR1Map.put(move, reply);
             }
-
-
-        }
-        else{
-            for (Move move : moveHistory){
-                if (move.colour != startingColour){
-                    LGR1Map.remove(move);
-                }
+            else {
+                LGR1Map.remove(move);
             }
+
         }
+
+
+
     }
 
 
@@ -68,10 +67,9 @@ public class BridgePattern {
             } else {
                 final Move lgrMove = LGR1Map.get(lastMove);
                 // Use lgr
-                if (lgrMove != null && currentBoard[lgrMove.y][lgrMove.x] == '0'){
+                if (lgrMove != null && currentBoard[lgrMove.y][lgrMove.x] == '0') {
                     move = lgrMove;
-                }
-                else{
+                } else {
                     do {
                         move = moves.get(cnt++);
                     } while (currentBoard[move.y][move.x] != '0');
