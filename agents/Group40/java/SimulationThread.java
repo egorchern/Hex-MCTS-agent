@@ -18,7 +18,8 @@ public class SimulationThread implements Runnable{
     public final Move lastMove;
     public final int simulationsCount;
     public final Map<Move, Move> LGR1Map = new HashMap<>();
-    private final BridgePattern simulationPolicy = new BridgePattern(ThreadLocalRandom.current(), LGR1Map);
+    public final Map<List<Move>, Move> LGR2Map = new HashMap<>();
+    private final BridgePattern simulationPolicy = new BridgePattern(ThreadLocalRandom.current(), LGR1Map, LGR2Map);
     public SimulationResult simulationResult = new SimulationResult();
 
     public SimulationThread(char[][] board, Move lastMove, int simulationsCount){
