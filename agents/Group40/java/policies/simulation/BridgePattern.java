@@ -9,15 +9,38 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class BridgePattern {
     private final ThreadLocalRandom randomSource;
-    // To stop trying to find patterns in the end game, where random moves are good
-    // enough
+    public final Map<Move, Move> LGR1Map;
+
     public static int patternFindNCuttoff = 0;
 
-    public BridgePattern(ThreadLocalRandom src) {
+    public BridgePattern(ThreadLocalRandom src, Map<Move, Move> cLGRMap) {
         randomSource = src;
+        LGR1Map = cLGRMap;
     }
 
-    public char playout(char[][] board, char startingColour) {
+    private static void processLGR(ArrayDeque<Move> moveHistory, Map<Move, Move> LGR1Map, char winnerColour, char startingColour) {
+        // Record successfull replies
+        if (winnerColour == startingColour) {
+            final int N = moveHistory.size();
+            for (int i = 0; i < N - 1; i++){
+                final Move reply = moveHistory.removeLast();
+                final Move move = moveHistory.peekLast();
+                LGR1Map.put(move, reply);
+            }
+
+
+        }
+        else{
+            for (Move move : moveHistory){
+                if (move.colour != startingColour){
+                    LGR1Map.remove(move);
+                }
+            }
+        }
+    }
+
+
+    public char playout(char[][] board, Move cLastMove) {
         // Optimised random playout: get legal moves, shuffle that array and play in
         // that order
         // Then check who won, no need to check after each move
@@ -25,13 +48,17 @@ public class BridgePattern {
         // Shuffle in place
         Collections.shuffle(moves, randomSource);
         final char[][] currentBoard = Common.copy2dArray(board);
+        final char startingColour = Common.getOppColour(cLastMove.colour);
         int counter = startingColour == 'R' ? 0 : 1;
         final int N = moves.size();
-        Move lastMove = moves.get(0);
+        ArrayDeque<Move> moveHistory = new ArrayDeque<>(N);
+        moveHistory.addLast(cLastMove);
         int cnt = 0;
-        for (int i = 0; i < N; i++){
+        for (int i = 0; i < N; i++) {
             Move move;
             final char curColour = Common.charOptions[counter & 1];
+            final Move lastMove = moveHistory.peekLast();
+
             final ArrayList<Move> patterns = Bridge.findPatterns(currentBoard, lastMove, curColour);
             final int numPatterns = patterns.size();
 
@@ -39,15 +66,27 @@ public class BridgePattern {
                 final int randomIndex = randomSource.nextInt(0, numPatterns);
                 move = patterns.get(randomIndex);
             } else {
+                final Move lgrMove = LGR1Map.get(lastMove);
+                // Use lgr
+                if (lgrMove != null && currentBoard[lgrMove.y][lgrMove.x] == '0'){
+                    move = lgrMove;
+                }
+                else{
+                    do {
+                        move = moves.get(cnt++);
+                    } while (currentBoard[move.y][move.x] != '0');
+                }
 
-                do {
-                    move = moves.get(cnt++);
-                } while (currentBoard[move.y][move.x] != '0');
             }
+
+
+            move.colour = curColour;
             currentBoard[move.y][move.x] = Common.charOptions[counter++ & 1];
-            lastMove = move;
+            moveHistory.addLast(move);
 
         }
-        return Common.getWinnerFullBoard(currentBoard);
+        char Winner = Common.getWinnerFullBoard(currentBoard);
+        processLGR(moveHistory, LGR1Map, Winner, startingColour);
+        return Winner;
     }
 }

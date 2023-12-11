@@ -47,7 +47,7 @@ public class Common {
             for (int idx = 0; idx < boardSize; idx++){
                 if (board[idy][idx] == '0'){
 
-                    moves.add(new Move(idy, idx));
+                    moves.add(new Move(idy, idx, 'R'));
                 }
             }
         }
@@ -61,7 +61,7 @@ public class Common {
             for (int idx = 0; idx < boardSize; idx++){
                 if (board[idy][idx] == '0'){
 
-                    final Move move = new Move(idy, idx);
+                    final Move move = new Move(idy, idx, 'R');
                     if (!exceptSet.contains(move)){
                         moves.add(move);
                     }
@@ -235,21 +235,20 @@ public class Common {
 
     public static char getWinnerFullBoard(char[][] board){
 
-        final int yLen = boardSize;
+        final int xLen = boardSize;
         final boolean[][] visited = Arrays.stream(RefVisited).map(boolean[]::clone).toArray(boolean[][]::new);
-        // Check Blue
-        for (int idy = 0; idy < yLen; idy++){
-            final char cell = board[idy][0];
-            if (!visited[idy][0] && cell == 'B'){
-                final boolean isConnected = DFSColourFullyConnected(0, idy, 'B', visited, board);
+        // Check Red
+        for (int idx = 0; idx < xLen; idx++){
+            char cell = board[0][idx];
+            if (!visited[0][idx] && cell == 'R'){
+                boolean isConnected = DFSColourFullyConnected(idx, 0, 'R', visited, board);
                 if (isConnected){
-                    return 'B';
+                    return 'R';
                 }
             }
-
         }
         // If blue didnt win, then Red must have won it on the fully moved board, so no need to check the blue
 
-        return 'R';
+        return 'B';
     }
 }

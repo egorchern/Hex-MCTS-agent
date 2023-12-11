@@ -21,6 +21,7 @@ public class ExpandOneRandom {
         final int randomIndex = ThreadLocalRandom.current().nextInt(0, moves.size());
 
         final Move move = moves.get(randomIndex);
+        move.colour = colour;
         final MCTSNode newNode = new MCTSNode(colour, move);
         return new MCTSNode[]{newNode};
     }

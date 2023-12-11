@@ -20,7 +20,7 @@ def main():
 }
 
     EnemyCmd = strengthToCmd[strength]
-    OurCmd = f"java -cp agents/Group40/java/dist/Group40.jar javaV.Index {timeLimit} {SimulationsPerThread} {C}"
+    OurCmd = f"java -XX:+UseG1GC -cp agents/Group40/java/dist/Group40.jar javaV.Index {timeLimit} {SimulationsPerThread} {C}"
     
     # Play ours as red
     for i in range(timesToPlay):

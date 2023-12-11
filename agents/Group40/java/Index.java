@@ -143,7 +143,7 @@ class Index{
         return agent.MCTS(board, colour, turn);
     }
     private Move decideFirstRedMove(){
-        Move move = new Move(0, 0);
+        Move move = new Move(0, 0, 'R');
         Random cur = ThreadLocalRandom.current();
         int firstChoice = cur.nextInt(2);
         int secondChoice = cur.nextInt(2);
@@ -187,7 +187,7 @@ class Index{
         else if (colour == 'B' && turn == 2){
             try {
                 if (shouldSwap(lastMove)) {
-                    move = new Move(-1, -1);
+                    move = new Move(-1, -1, 'B');
                 } else {
                     move = decideMove(curBoard, colour, turn);
                 }

@@ -9,6 +9,7 @@ import javaV.policies.expansion.ExpandOneRandom;
 import javaV.policies.rootMoveSelection.SecureChild;
 import javaV.policies.selection.UCT;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
@@ -55,7 +56,7 @@ public class MCTSAgent {
         Thread[] threads = new Thread[cores];
         SimulationThread[] threadInfos = new SimulationThread[cores];
         for (int i = 0; i < threads.length; i++){
-            threadInfos[i] = new SimulationThread(board, node.colour, simulationsCntPerCore);
+            threadInfos[i] = new SimulationThread(board, node.move, simulationsCntPerCore);
             threads[i] = new Thread(threadInfos[i]);
             threads[i].start();
 
@@ -113,11 +114,13 @@ public class MCTSAgent {
         root = new MCTSNode(colour);
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
+        int iterations = 0;
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
+            iterations++;
             MCTSNode node = root;
             char[][] current_board = Common.copy2dArray(board);
             // Selection phase
-            Stack<MCTSNode> path = new Stack<>();
+            ArrayList<MCTSNode> path = new ArrayList<>();
             path.add(node);
             while (node.children.size() == Common.getNumLegalMoves(current_board)){
                 node = select(node);
@@ -137,7 +140,8 @@ public class MCTSAgent {
                 //Update the newly expanded node first
                 backPropogationPolicy.update(expandedNode, simulationResult);
                 //Update all nodes on path, going from latest node (LIFO)
-                for(MCTSNode nodeOnPath : path){
+                for(int i = path.size() - 1; i >= 0; i--){
+                    final MCTSNode nodeOnPath = path.get(i);
                     backPropogationPolicy.update(nodeOnPath, simulationResult);
                 }
             }
@@ -152,6 +156,7 @@ public class MCTSAgent {
                 }
             }
         }
+        System.out.println(iterations);
         final Move bestMove = selectBestMove(root);
         root = null;
         return bestMove;

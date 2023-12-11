@@ -80,39 +80,39 @@ public class Bridge {
         // Left
         if (idy - 1 >= 0 && idy + 1 < yLen && idx - 1 >= 0){
             if (board[idy - 1][idx] == curColour && board[idy + 1][idx - 1] == curColour && board[idy][idx - 1] == '0'){
-                patterns.add(new Move(idy, idx - 1));
+                patterns.add(new Move(idy, idx - 1, curColour));
             }
         }
         // Right
         if(idy - 1 >= 0 && idy + 1 < yLen && idx + 1 < xLen){
             if (board[idy - 1][idx + 1] == curColour && board[idy + 1][idx] == curColour && board[idy][idx + 1] == '0'){
-                patterns.add(new Move(idy, idx + 1));
+                patterns.add(new Move(idy, idx + 1, curColour));
             }
         }
         // Left to right diagnals
         // Right
         if(idy - 1 >= 0 && idx + 1 < xLen){
             if (board[idy - 1][idx] == curColour && board[idy][idx + 1] == curColour && board[idy - 1][idx + 1] == '0'){
-                patterns.add(new Move(idy - 1, idx + 1));
+                patterns.add(new Move(idy - 1, idx + 1, curColour));
             }
         }
         // Left
         if(idy + 1 < yLen && idx - 1 >= 0){
             if (board[idy][idx - 1] == curColour && board[idy + 1][idx] == curColour && board[idy + 1][idx - 1] == '0'){
-                patterns.add(new Move(idy + 1, idx - 1));
+                patterns.add(new Move(idy + 1, idx - 1, curColour));
             }
         }
         // Right to left diagnals
         // Left
         if (idy - 1 >= 0 && idx + 1 < xLen && idx - 1 >= 0){
             if (board[idy - 1][idx + 1] == curColour && board[idy][idx - 1] == curColour && board[idy - 1][idx] == '0'){
-                patterns.add(new Move(idy - 1, idx));
+                patterns.add(new Move(idy - 1, idx, curColour));
             }
         }
         // Right
         if (idy + 1 < yLen && idx + 1 < xLen && idx - 1 >= 0){
             if (board[idy][idx + 1] == curColour && board[idy + 1][idx - 1] == curColour && board[idy + 1][idx] == '0'){
-                patterns.add(new Move(idy + 1, idx));
+                patterns.add(new Move(idy + 1, idx, curColour));
             }
         }
 
