@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class Index{
     public static String HOST = "127.0.0.1";
-    public static int PORT = 1235;
+    public static int PORT = 1234;
 
     private Socket s;
     private PrintWriter out;
