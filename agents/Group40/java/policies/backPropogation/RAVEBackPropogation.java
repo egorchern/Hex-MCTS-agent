@@ -1,6 +1,7 @@
 package javaV.policies.backPropogation;
 
 import javaV.MCTSNode;
+import javaV.common.Common;
 import javaV.common.RAVEStat;
 import javaV.common.SimulationResult;
 import javaV.common.SimulationWins;
@@ -19,17 +20,16 @@ public class RAVEBackPropogation {
             node.Q += simulationResult.rWins;
         }
 
-        final int N = simulationResult.amafStats.length;
+        final int N = Common.boardSize;
         for(int idy = 0; idy < N; idy++){
             for(int idx = 0; idx < N; idx++){
                 final RAVEStat curNodeRaveCell = node.RAVEStats[idy][idx];
-                final SimulationWins amafStat = simulationResult.amafStats[idy][idx];
-                curNodeRaveCell.N += amafStat.bWins + amafStat.rWins;
+                curNodeRaveCell.N += totalSimulations;
                 if (node.colour == 'R'){
-                    curNodeRaveCell.Q += amafStat.bWins;
+                    curNodeRaveCell.Q += simulationResult.bWins;
                 }
                 else{
-                    curNodeRaveCell.Q += amafStat.rWins;
+                    curNodeRaveCell.Q += simulationResult.rWins;
                 }
             }
         }

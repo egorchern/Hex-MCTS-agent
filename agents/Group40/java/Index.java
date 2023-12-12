@@ -86,7 +86,7 @@ class Index{
         }
     }
 
-    private boolean interpretMessage(String s){
+    public boolean interpretMessage(String s){
         turn++;
 
         String[] msg = s.strip().split(";");
@@ -222,20 +222,13 @@ class Index{
             MCTSAgent.C = Double.parseDouble(args[2]);
         }
         Index intr = new Index();
-        intr.run();
-//        char[][] testBoard = new char[11][11];
-//        for (int i = 0; i < 11; i++){
-//            for (int j = 0; j < 11; j++){
-//                testBoard[i][j] = '0';
-//            }
-//        }
-//        testBoard[2][10] = 'R';
-//        Common.boardSize = 11;
-//        testBoard[5][5] = 'R';
-//        Common.initializeRefVisited();
-//        System.out.println(agent.MCTS(testBoard, 'B', 2));
-//        intr.colour = 'B';
-//        intr.turn = 2;
-//        intr.makeMove("00000000000,00000000000,0000000000R,00000000000,00000000000,00000000000,00000000000,00000000000,00000000000,00000000000,00000000000", "2,10");
+//        intr.run();
+
+        Common.boardSize = 11;
+        Common.initializeRefVisited();
+        intr.colour = 'B';
+        intr.interpretMessage("CHANGE;0,3;000R0000000,R000000000R,0000000RB0B,000000BBB0B,0RR0B0B0000,R0BBBB00000,R0B000000R0,B000R000000,0R000000000,00R000R00R0,000000000R0;B");
+
+
     }
 }

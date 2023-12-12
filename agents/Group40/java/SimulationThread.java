@@ -27,7 +27,6 @@ public class SimulationThread implements Runnable{
     public void run(){
         int localRWins = 0;
         int localBWins = 0;
-        final SimulationWins[][] amafStats = simulationResult.amafStats;
         for(int i = 0; i < simulationsCount; i++){
             char winner = simulationPolicy.playout();
             if (winner == 'R'){
@@ -36,17 +35,10 @@ public class SimulationThread implements Runnable{
             else{
                 localBWins++;
             }
-            // Update RAVE stats
-            for (Move move : legalMoves){
-                final SimulationWins amafCell = amafStats[move.y][move.x];
-                if (winner == 'R'){
-                    amafCell.rWins++;
-                }
-                else{
-                    amafCell.bWins++;
-                }
-            }
+
+
         }
+
         simulationResult.rWins = localRWins;
         simulationResult.bWins = localBWins;
     }
