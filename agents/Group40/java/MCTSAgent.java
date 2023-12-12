@@ -14,12 +14,9 @@ import java.util.Collections;
 
 public class MCTSAgent {
     // Parameters
-    public static int simulationsCntPerCore = 200;
-    public static double timeLimitSeconds = 7;
+    public static int simulationsCntPerCore = 135;
+    public static double timeLimitSeconds = 6.5;
     public static double C = 0.4;
-    public static final double initialTimeLimit = 8.2;
-    public static final double finalTimeLimit = 1.5;
-    public static final int maxTurns = 61;
     // Policies
     private static final UCT selectionPolicy = new UCT();
     private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
@@ -90,17 +87,12 @@ public class MCTSAgent {
         return simulationResult;
 
     }
-    private double calculate_time_limit(int current_turn, double initial_time_limit, int max_turns, double final_time_limit){
-        return initial_time_limit + (current_turn - 1) * (final_time_limit - initial_time_limit) / (max_turns - 1);
-    }
 
     private double getTimeLimit(double turn){
-        if (turn <= 30) {
-            return 7.3;
+        if (turn <= 33) {
+            return 7.2;
         } else if (turn <= 50) {
-            return 3.5;
-        } else if (turn <= 58) {
-            return 1.0;
+            return 3.3;
         } else {
             return 0.5;
         }
@@ -112,7 +104,6 @@ public class MCTSAgent {
 
     public Move MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
-//        timeLimitSeconds = calculate_time_limit((int) Math.ceil(turn_count/2), initialTimeLimit, maxTurns, finalTimeLimit);
         timeLimitSeconds = getTimeLimit(Math.ceil(turn_count/2));
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
