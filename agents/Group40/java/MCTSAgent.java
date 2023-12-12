@@ -91,19 +91,16 @@ public class MCTSAgent {
         return simulationResult;
 
     }
-//    private static void handleSwapRule(MCTSNode root, char colour, int turn_count, char[][] board){
-//        if (!(colour == 'B' && turn_count == 2)){
-//            return;
-//        }
-//        MCTSNode swapNode = new MCTSNode('B', new Move(-1, -1));
-//        root.children.add(swapNode);
-//        SimulationResult simulationResult = simulate(swapNode, board);
-//
-//        //Back-propogation phase
-//        //Update the newly expanded node first
-//        backPropogationPolicy.update(swapNode, simulationResult);
-//        backPropogationPolicy.update(root, simulationResult);
-//    }
+
+    private double getTimeLimit(double turn){
+        if (turn <= 33) {
+            return 7.2;
+        } else if (turn <= 50) {
+            return 3.3;
+        } else {
+            return 0.5;
+        }
+    }
 
     private static Move selectBestMove(MCTSNode root){
         return rootMoveSelectionPolicy.getBestChild(root).move;
@@ -111,6 +108,7 @@ public class MCTSAgent {
 
     public Move MCTS(char[][] board, char colour, int turn_count){
         root = new MCTSNode(colour);
+        timeLimitSeconds = getTimeLimit(Math.ceil(turn_count/2));
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
