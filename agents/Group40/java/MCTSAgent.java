@@ -127,28 +127,29 @@ public class MCTSAgent {
             }
             // Expansion phase
             final MCTSNode[] expandedNodes = expand(node, current_board);
+            
             // Simulation Phase
+            List<Move> allPlayedMoves = new ArrayList<>(); // List to accumulate all moves played in all simulations
             for(MCTSNode expandedNode : expandedNodes){
                 char[][] simulationBoard = Common.copy2dArray(current_board);
                 final Move move = expandedNode.move;
                 simulationBoard[move.y][move.x] = Common.getOppColour(expandedNode.colour);
-                final SimulationResult simulationResult = simulate(expandedNode, simulationBoard);
-                //Back-propogation phase
-                //Update the newly expanded node first
-                backPropogationPolicy.update(expandedNode, simulationResult);
-                //Update all nodes on path, going from latest node (LIFO)
+                final SimulationResult simulationResult = simulate(expandedNode, simulationBoard, allPlayedMoves); // Modify simulate method to fill allPlayedMoves
+                // Back-propogation phase
+                backPropogationPolicy.update(expandedNode, simulationResult, allPlayedMoves); // Update with RAVE
                 for(MCTSNode nodeOnPath : path){
-                    backPropogationPolicy.update(nodeOnPath, simulationResult);
+                    backPropogationPolicy.update(nodeOnPath, simulationResult, allPlayedMoves); // Update with RAVE
                 }
             }
             // If there are no expanded nodes : reached end, which is unlikely but may happen
             // Simply run simulations on that node
             if (expandedNodes.length == 0){
+                allPlayedMoves = new ArrayList<>();
+                final SimulationResult simulationResult = simulate(node, current_board, allPlayedMoves);
 
-                final SimulationResult simulationResult = simulate(node, current_board);
-
-                for(MCTSNode nodeOnPath : path){
-                    backPropogationPolicy.update(nodeOnPath, simulationResult);
+                backPropogationPolicy.update(node, simulationResult, allPlayedMoves); // Update with RAVE
+                for (MCTSNode nodeOnPath : path) {
+                    backPropogationPolicy.update(nodeOnPath, simulationResult, allPlayedMoves); // Update with RAVE
                 }
             }
         }

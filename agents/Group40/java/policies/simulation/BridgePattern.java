@@ -46,7 +46,7 @@ public class BridgePattern {
             }
             currentBoard[move.y][move.x] = Common.charOptions[counter++ & 1];
             lastMove = move;
-
+            playedMoves.add(move);
         }
         return Common.getWinnerFullBoard(currentBoard);
     }

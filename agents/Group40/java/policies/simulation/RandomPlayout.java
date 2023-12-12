@@ -22,6 +22,7 @@ public class RandomPlayout {
         int counter = startingColour == 'R' ? 0 : 1;
         for(final Move move: moves){
             currentBoard[move.y][move.x] = Common.charOptions[counter++ & 1];
+            playedMoves.add(move);
         }
         return Common.getWinnerFullBoard(currentBoard);
     }
