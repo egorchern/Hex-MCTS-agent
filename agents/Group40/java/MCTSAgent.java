@@ -3,10 +3,13 @@ package javaV;
 import javaV.common.Common;
 import javaV.common.Move;
 import javaV.common.SimulationResult;
+import javaV.common.SimulationWins;
 import javaV.policies.backPropogation.MCTSBackPropogation;
+import javaV.policies.backPropogation.RAVEBackPropogation;
 import javaV.policies.expansion.ExpandAll;
 import javaV.policies.expansion.ExpandOneRandom;
 import javaV.policies.rootMoveSelection.SecureChild;
+import javaV.policies.selection.RAVE;
 import javaV.policies.selection.UCT;
 
 import java.util.ArrayList;
@@ -19,9 +22,9 @@ public class MCTSAgent {
     public static double timeLimitSeconds = 6.5;
     public static double C = 0.5;
     // Policies
-    private static final UCT selectionPolicy = new UCT();
+    private static final RAVE selectionPolicy = new RAVE();
     private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
-    private static final MCTSBackPropogation backPropogationPolicy = new MCTSBackPropogation();
+    private static final RAVEBackPropogation backPropogationPolicy = new RAVEBackPropogation();
     private static final SecureChild rootMoveSelectionPolicy = new SecureChild();
     public static int cores = Runtime.getRuntime().availableProcessors();
 
@@ -50,7 +53,7 @@ public class MCTSAgent {
     }
 
     private static SimulationResult simulate(MCTSNode node, char[][] board){
-        SimulationResult simulationResult = new SimulationResult();
+        SimulationResult simulationResult = new SimulationResult(Common.boardSize);
 
         Thread[] threads = new Thread[cores];
         SimulationThread[] threadInfos = new SimulationThread[cores];
@@ -70,10 +73,25 @@ public class MCTSAgent {
             }
 
         }
+        final SimulationWins[][] curAmafStats = simulationResult.amafStats;
 
+        // Combine results from all threads
         for (SimulationThread threadInfo : threadInfos){
             simulationResult.rWins += threadInfo.simulationResult.rWins;
             simulationResult.bWins += threadInfo.simulationResult.bWins;
+
+        }
+        final int N = Common.boardSize;
+        for(int idy = 0; idy < N; idy++){
+            for(int idx = 0; idx < N; idx++){
+                final SimulationWins curAmafCell = curAmafStats[idy][idx];
+                for (SimulationThread threadInfo : threadInfos){
+                    final SimulationWins curThreadAmafCell = threadInfo.simulationResult.amafStats[idy][idx];
+                    curAmafCell.rWins += curThreadAmafCell.rWins;
+                    curAmafCell.bWins += curThreadAmafCell.bWins;
+                }
+
+            }
         }
 
 

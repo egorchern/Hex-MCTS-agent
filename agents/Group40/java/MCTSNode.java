@@ -1,6 +1,7 @@
 package javaV;
 
 import javaV.common.Move;
+import javaV.common.RAVEStat;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ public class MCTSNode {
     public long Q;
     public Move move = null;
     public char colour;
+    public RAVEStat[][] RAVEStats;
     public MCTSNode(char cColour){
         colour = cColour;
     }
