@@ -5,17 +5,11 @@ import java.util.*;
 public class Common {
 
     public static char getOppColour(char curColour){
-        switch (curColour){
-            case ('B'):
-                return 'R';
-
-            case ('R'):
-                return 'B';
-
-            default:
-                return '0';
-
-        }
+        return switch (curColour) {
+            case ('R') -> 'B';
+            case ('B') -> 'R';
+            default -> '0';
+        };
     }
 
     public static int boardSize;

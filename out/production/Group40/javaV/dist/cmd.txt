@@ -1,1 +1,0 @@
-java -XX:+UseG1GC -cp agents/Group40/java/dist/Group40.jar javaV.Index 6 120 0.42
