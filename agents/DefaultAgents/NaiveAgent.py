@@ -9,7 +9,7 @@ class NaiveAgent():
     """
 
     HOST = "127.0.0.1"
-    PORT = 1234
+    PORT = 1235
 
     def run(self):
         """A finite-state machine that cycles through waiting for input
