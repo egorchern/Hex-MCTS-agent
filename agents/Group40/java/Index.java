@@ -222,12 +222,12 @@ class Index{
             MCTSAgent.C = Double.parseDouble(args[2]);
         }
         Index intr = new Index();
-//        intr.run();
+        intr.run();
 
-        Common.boardSize = 11;
-        Common.initializeRefVisited();
-        intr.colour = 'B';
-        intr.interpretMessage("CHANGE;0,3;000R0000000,R000000000R,0000000RB0B,000000BBB0B,0RR0B0B0000,R0BBBB00000,R0B000000R0,B000R000000,0R000000000,00R000R00R0,000000000R0;B");
+//        Common.boardSize = 11;
+//        Common.initializeRefVisited();
+//        intr.colour = 'B';
+//        intr.interpretMessage("CHANGE;0,3;000R0000000,R000000000R,0000000RB0B,000000BBB0B,0RR0B0B0000,R0BBBB00000,R0B000000R0,B000R000000,0R000000000,00R000R00R0,000000000R0;B");
 
 
     }

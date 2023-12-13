@@ -21,7 +21,7 @@ public class MCTSAgent {
     // Parameters
     public static int simulationsCntPerCore = 115;
     public static double timeLimitSeconds = 6.5;
-    public static double C = 0.5;
+    public static double C = 0.0000001;
     // Policies
     private static final RAVE selectionPolicy = new RAVE();
     private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
@@ -113,15 +113,13 @@ public class MCTSAgent {
         timeLimitSeconds = getTimeLimit(Math.ceil(turn_count/2));
         final double msTimeLimit = timeLimitSeconds * 1000;
         final long start_time = System.currentTimeMillis();
-        int iterations = 0;
         while ((System.currentTimeMillis() - start_time) < msTimeLimit){
-            iterations++;
             MCTSNode node = root;
             char[][] current_board = Common.copy2dArray(board);
             // Selection phase
             ArrayList<MCTSNode> path = new ArrayList<>();
             path.add(node);
-            while (node.children.size() == Common.getNumLegalMoves(current_board)){
+            while (!node.children.isEmpty() && node.children.size() == Common.getNumLegalMoves(current_board)){
                 node = select(node);
                 path.add(node);
                 final Move move = node.move;
@@ -155,7 +153,6 @@ public class MCTSAgent {
                 }
             }
         }
-        System.out.println(iterations);
         final Move bestMove = selectBestMove(root);
         root = null;
         return bestMove;
