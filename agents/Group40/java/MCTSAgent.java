@@ -105,7 +105,7 @@ public class MCTSAgent {
     }
 
     private static Move selectBestMove(MCTSNode root){
-        return RobustChild.getBestChild(root).move;
+        return SecureChild.getBestChild(root).move;
     }
 
     public Move MCTS(char[][] board, char colour, int turn_count){
