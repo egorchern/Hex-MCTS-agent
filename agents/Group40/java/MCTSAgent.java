@@ -22,6 +22,8 @@ public class MCTSAgent {
     public static int simulationsCntPerCore = 115;
     public static double timeLimitSeconds = 6.5;
     public static double C = 0.0000001;
+    public static double FirstTimeBoundary = 6;
+    public static double SecondTimeBoundary = 3;
     // Policies
     private static final RAVE selectionPolicy = new RAVE();
     private static final ExpandOneRandom expansionPolicy = new ExpandOneRandom();
@@ -96,9 +98,9 @@ public class MCTSAgent {
 
     private double getTimeLimit(double turn){
         if (turn <= 33) {
-            return 7.2;
+            return FirstTimeBoundary;
         } else if (turn <= 50) {
-            return 3.3;
+            return SecondTimeBoundary;
         } else {
             return 0.5;
         }

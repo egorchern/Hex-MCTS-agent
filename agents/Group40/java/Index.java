@@ -213,13 +213,16 @@ class Index{
     public static void main(String[] args){
         // Set parameters
         if(args.length >= 1){
-            MCTSAgent.timeLimitSeconds = Double.parseDouble(args[0]);
+            MCTSAgent.FirstTimeBoundary = Double.parseDouble(args[0]);
         }
         if (args.length >= 2){
-            MCTSAgent.simulationsCntPerCore = Integer.parseInt(args[1]);
+            MCTSAgent.SecondTimeBoundary = Double.parseDouble(args[1]);
         }
-        if(args.length >= 3){
-            MCTSAgent.C = Double.parseDouble(args[2]);
+        if (args.length >= 3){
+            MCTSAgent.simulationsCntPerCore = Integer.parseInt(args[2]);
+        }
+        if(args.length >= 4){
+            MCTSAgent.C = Double.parseDouble(args[3]);
         }
         Index intr = new Index();
         intr.run();

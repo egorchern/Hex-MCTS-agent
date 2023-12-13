@@ -8,9 +8,10 @@ from os.path import isfile, join
 def main():
     strength = int(sys.argv[1])
     timesToPlay = int(sys.argv[2])
-    timeLimit = float(sys.argv[3])
-    SimulationsPerThread = int(sys.argv[4])
-    C = float(sys.argv[5])
+    firstTimeBoundary = float(sys.argv[3])
+    secondTimeBoundary =  float(sys.argv[4])
+    SimulationsPerThread = int(sys.argv[5])
+    C = float(sys.argv[6])
     strengthToCmd = {
     1: "agents/TestAgents/alice/alice",
     3: "./agents/TestAgents/joni/joniagent --agent minimax --depth 2 --heuristic monte-carlo --num-playouts 500",
@@ -20,7 +21,7 @@ def main():
 }
 
     EnemyCmd = strengthToCmd[strength]
-    OurCmd = f"java -XX:+UseG1GC -cp agents/Group40/java/dist/Group40.jar javaV.Index {timeLimit} {SimulationsPerThread} {C}"
+    OurCmd = f"java -cp agents/Group40/java/dist/Group40.jar javaV.Index {firstTimeBoundary} {secondTimeBoundary} {SimulationsPerThread} {C}"
     
     # Play ours as red
     for i in range(timesToPlay):
