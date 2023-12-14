@@ -44,7 +44,7 @@ public class BridgePattern {
             final ArrayList<Move> patterns = Bridge.findPatterns(currentBoard, curLastMove, curColour);
             final int numPatterns = patterns.size();
 
-            if (numPatterns > 0 && randomSource.nextDouble() <= pNotUseBridge) {
+            if (numPatterns > 0 && randomSource.nextDouble() >= pNotUseBridge) {
                 final int randomIndex = randomSource.nextInt(0, numPatterns);
                 move = patterns.get(randomIndex);
             } else {
