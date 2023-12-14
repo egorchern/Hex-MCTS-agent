@@ -16,6 +16,7 @@ public class BridgePattern {
     private ArrayList<Move> legalMoves;
     private final char startingColour;
     public static int patternFindNCuttoff = 0;
+    public static double pNotUseBridge = 0.1;
 
     public BridgePattern(ThreadLocalRandom src, Move lastMove, char startingColour, char[][] board, ArrayList<Move> legalMoves) {
         this.randomSource = src;
@@ -39,10 +40,11 @@ public class BridgePattern {
         for (int i = 0; i < N; i++) {
             Move move;
             final char curColour = Common.charOptions[counter & 1];
+
             final ArrayList<Move> patterns = Bridge.findPatterns(currentBoard, curLastMove, curColour);
             final int numPatterns = patterns.size();
 
-            if (numPatterns > 0) {
+            if (numPatterns > 0 || randomSource.nextDouble() <= pNotUseBridge) {
                 final int randomIndex = randomSource.nextInt(0, numPatterns);
                 move = patterns.get(randomIndex);
             } else {
