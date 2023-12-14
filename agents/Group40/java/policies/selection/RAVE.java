@@ -5,8 +5,8 @@ import javaV.MCTSNode;
 import javaV.common.RAVEStat;
 
 public class RAVE {
-    public static int cutoffFactor = 7;
-    public static int V = (MCTSAgent.simulationsCntPerCore * MCTSAgent.cores) * cutoffFactor;
+
+    public static int V = 3000;
     public static double calculateValue(MCTSNode child, MCTSNode parent){
         final RAVEStat raveStat = parent.RAVEStats[child.move.y][child.move.x];
         final double raveFactor = Math.max(0, ((double)(V - child.N) / V));
