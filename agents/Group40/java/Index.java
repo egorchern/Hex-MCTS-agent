@@ -88,7 +88,9 @@ class Index{
 
     public boolean interpretMessage(String s){
         turn++;
-
+        if (s == null){
+            return true;
+        }
         String[] msg = s.strip().split(";");
         switch (msg[0]){
             case "START":
